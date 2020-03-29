@@ -1,2 +1,2 @@
-include ':app', ':chartmodule'
+include ':app', ':chartmodule', ':simulateddata'
 rootProject.name='StockChart'

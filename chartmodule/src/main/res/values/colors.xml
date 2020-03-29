@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <!--红涨绿跌：红-->
+  <color name="color_fd4331">#fd4331</color>
+  <!--红涨绿跌：绿-->
+  <color name="color_05aa3b">#05aa3b</color>
+
+</resources>
