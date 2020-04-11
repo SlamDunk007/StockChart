@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * @author guannan
  * @date on 2020-03-29 16:25
- * @des 绘制在屏幕上的K线元素
+ * @des 绘制在当前屏幕上的每一个交易日的数据
  */
 public class KLineToDrawItem implements Serializable {
 
@@ -24,4 +24,9 @@ public class KLineToDrawItem implements Serializable {
    * 当天涨跌： true:跌   false：涨
    */
   public boolean isFall;
+
+  /**
+   * 当天交易日日期
+   */
+  public String date;
 }

@@ -25,6 +25,5 @@ public class MainActivity extends AppCompatActivity {
     parser.parseKlineData();
 
     mKLineChartView.initData(parser.klineList);
-    mKLineChartView.invalidateView();
   }
 }

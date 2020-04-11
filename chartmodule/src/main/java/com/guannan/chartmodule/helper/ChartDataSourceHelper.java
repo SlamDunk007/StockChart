@@ -1,8 +1,9 @@
-package com.guannan.chartmodule.help;
+package com.guannan.chartmodule.helper;
 
 import android.graphics.RectF;
 import com.guannan.chartmodule.chart.ViewPortHandler;
 import com.guannan.chartmodule.data.KLineToDrawItem;
+import com.guannan.chartmodule.utils.DateUtils;
 import com.guannan.simulateddata.entity.KLineItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ChartDataSourceHelper {
   /**
    * k线的绘制数据
    */
-  public List<KLineToDrawItem> kLineItems;
+  private List<KLineToDrawItem> kLineItems;
 
   /**
    * 尺寸辅助类
@@ -53,6 +54,17 @@ public class ChartDataSourceHelper {
   private ViewPortHandler mViewPortHandler;
 
   private List<KLineItem> mKList;
+
+  private OnChartDataCountListener<List<KLineToDrawItem>> mReadyListener;
+
+  /**
+   * 最大值最小值放大系数
+   */
+  private float scale = 0.02f;
+
+  public ChartDataSourceHelper(OnChartDataCountListener<List<KLineToDrawItem>> listener) {
+    this.mReadyListener = listener;
+  }
 
   /**
    * 初始化行情图初始数据
@@ -106,11 +118,15 @@ public class ChartDataSourceHelper {
       }
     }
 
+    // 最大值、最小值缩放系数
+    maxPrice = maxPrice * (1 + scale);
+    minPrice = minPrice * (1 - scale);
+
     // 最大值最小值差值
     float diffPrice = maxPrice - minPrice;
 
     // 计算当前屏幕每一个蜡烛线的位置和涨跌情况
-    for (int i = startIndex, k = 0; i < startIndex + K_D_COLUMNS; i++, k++) {
+    for (int i = startIndex, k = 0; i < endIndex; i++, k++) {
       KLineItem kLineItem = mKList.get(i);
 
       // 开盘价
@@ -143,7 +159,22 @@ public class ChartDataSourceHelper {
           drawItem.isFall = true;
         }
       }
+
+      // 计算每一个月的第一个交易日
+      if (i - 1 >= 0 && i + 1 < endIndex) {
+        int currentMonth = DateUtils.getMonth(kLineItem.day);
+        KLineItem preItem = mKList.get(i - 1);
+        int preMonth = DateUtils.getMonth(preItem.day);
+        if (currentMonth != preMonth) {
+          drawItem.date = kLineItem.day.substring(0, 10);
+        }
+      }
+
       kLineItems.add(drawItem);
+    }
+    // 数据准备完毕
+    if (mReadyListener != null) {
+      mReadyListener.onReady(kLineItems,maxPrice,minPrice);
     }
   }
 

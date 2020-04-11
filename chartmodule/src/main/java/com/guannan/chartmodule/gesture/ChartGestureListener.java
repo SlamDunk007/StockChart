@@ -43,7 +43,7 @@ public interface ChartGestureListener {
   /**
    * 当在图表上执行fling的时候调用
    */
-  void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY);
+  void onChartFling(float distanceX);
 
   /**
    * 当在图表上执行缩放的时候调用
@@ -57,7 +57,6 @@ public interface ChartGestureListener {
    * 当在图标执行move，drag的时候调用
    *
    * @param dX x轴移动距离
-   * @param dY y轴移动距离
    */
-  void onChartTranslate(MotionEvent me, float dX, float dY);
+  void onChartTranslate(MotionEvent me, float dX);
 }

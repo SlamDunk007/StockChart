@@ -43,7 +43,7 @@ public class ViewPortHandler {
    */
   public void restrainViewPort(float offLeft, float offTop, float offRight, float offBottom) {
     // 绘制的内容区域的大小
-    mContentRect.set(offLeft, offTop, mWidth - offRight, mHeight);
+    mContentRect.set(offLeft, offTop, mWidth - offRight, mHeight - offBottom);
   }
 
   /**

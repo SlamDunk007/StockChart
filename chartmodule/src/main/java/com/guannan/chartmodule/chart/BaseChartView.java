@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.guannan.chartmodule.utils.LogUtils;
+import com.guannan.chartmodule.utils.PaintUtils;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -100,7 +100,6 @@ public abstract class BaseChartView extends View {
   public BaseChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
 
-    LogUtils.d("init baseChartView--------");
     mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     // 行情图尺寸等辅助方法
@@ -108,6 +107,8 @@ public abstract class BaseChartView extends View {
 
     initRunnable();
     initHandler();
+
+    PaintUtils.init(context);
   }
 
   private void initRunnable() {
@@ -168,7 +169,6 @@ public abstract class BaseChartView extends View {
     mViewPortHandler.setChartDimens(w, h);
 
     initCanvas();
-    LogUtils.d("onSizeChanged--------");
     super.onSizeChanged(w, h, oldw, oldh);
   }
 
@@ -294,7 +294,6 @@ public abstract class BaseChartView extends View {
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    LogUtils.d("onDraw------");
     if (mRealBitmap != null) {
       canvas.drawBitmap(mRealBitmap, 0, 0, mPaint);
     }
