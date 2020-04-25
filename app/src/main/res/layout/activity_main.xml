@@ -4,14 +4,16 @@
   android:layout_height="match_parent"
   android:orientation="vertical">
 
-  <com.guannan.chartmodule.chart.KLineChartView
-    android:id="@+id/kline"
+  <com.guannan.chartmodule.chart.ChartContainer
+    android:id="@+id/chart_container"
     android:layout_width="match_parent"
-    android:layout_height="200dp" />
+    android:layout_height="wrap_content" />
 
   <Button
+    android:id="@+id/btn"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
     android:onClick="parse"
     android:text="parseKline" />
 

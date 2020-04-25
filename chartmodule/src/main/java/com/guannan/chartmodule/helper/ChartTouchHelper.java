@@ -1,4 +1,4 @@
-package com.guannan.chartmodule.gesture;
+package com.guannan.chartmodule.helper;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -12,6 +12,7 @@ import android.view.ViewConfiguration;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import androidx.core.view.GestureDetectorCompat;
+import com.guannan.chartmodule.inter.ChartGestureListener;
 import com.guannan.chartmodule.utils.DataUtils;
 import com.guannan.chartmodule.utils.DisplayUtils;
 
@@ -20,7 +21,7 @@ import com.guannan.chartmodule.utils.DisplayUtils;
  * @date on 2020-03-07 16:00
  * @des 图表的手势操作相关
  */
-public class ChartTouchListener
+public class ChartTouchHelper
     extends GestureDetector.SimpleOnGestureListener implements View.OnTouchListener {
 
   /**
@@ -115,7 +116,7 @@ public class ChartTouchListener
    */
   private float scrollX;
 
-  public ChartTouchListener(View view) {
+  public ChartTouchHelper(View view) {
     Context context = view.getContext();
     mDetectorCompat = new GestureDetectorCompat(context, this);
     view.setOnTouchListener(this);

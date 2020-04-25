@@ -1,4 +1,4 @@
-package com.guannan.chartmodule.helper;
+package com.guannan.chartmodule.inter;
 
 /**
  * @author guannan

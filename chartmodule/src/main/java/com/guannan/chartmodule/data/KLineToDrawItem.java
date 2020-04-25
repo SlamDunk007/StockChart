@@ -29,4 +29,9 @@ public class KLineToDrawItem implements Serializable {
    * 当天交易日日期
    */
   public String date;
+
+  /**
+   * 成交量
+   */
+  public RectF volumeRect;
 }

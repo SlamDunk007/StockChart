@@ -1,6 +1,7 @@
-package com.guannan.chartmodule.gesture;
+package com.guannan.chartmodule.inter;
 
 import android.view.MotionEvent;
+import com.guannan.chartmodule.helper.ChartTouchHelper;
 
 /**
  * @author guannan
@@ -15,7 +16,7 @@ public interface ChartGestureListener {
    * @param me 事件
    * @param lastPerformedGesture 最后的手势类型
    */
-  void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture);
+  void onChartGestureStart(MotionEvent me, ChartTouchHelper.ChartGesture lastPerformedGesture);
 
   /**
    * 当手势结束的时候，一般是(ACTION_UP, ACTION_CANCEL)
@@ -23,7 +24,7 @@ public interface ChartGestureListener {
    * @param me 事件
    * @param lastPerformedGesture 最后的手势类型
    */
-  void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture);
+  void onChartGestureEnd(MotionEvent me, ChartTouchHelper.ChartGesture lastPerformedGesture);
 
   /**
    * 当在图表上执行长按的时候调用

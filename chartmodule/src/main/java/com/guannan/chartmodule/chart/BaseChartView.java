@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.guannan.chartmodule.inter.TouchResponseListener;
 import com.guannan.chartmodule.utils.PaintUtils;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @date on 2020-02-21 13:28
  * @des 具体绘制View的基类：（1）采用双缓冲绘制机制 （2）支持在子线程当中进行绘制
  */
-public abstract class BaseChartView extends View {
+public abstract class BaseChartView extends View implements TouchResponseListener {
 
   /**
    * 如果创建画布Canvas失败：最大重试次数

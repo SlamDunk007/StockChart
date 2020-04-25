@@ -19,6 +19,11 @@ public class ViewPortHandler {
    */
   public RectF mContentRect = new RectF();
 
+  /**
+   * 主图蜡烛线区域所占比例
+   */
+  private float ratio = 1;
+
   public ViewPortHandler() {
 
   }
@@ -39,11 +44,18 @@ public class ViewPortHandler {
   }
 
   /**
+   * 绘制日期区域所占比例
+   */
+  public void setContentRatio(float ratio) {
+    this.ratio = ratio;
+  }
+
+  /**
    * 重置绘制区域的大小
    */
   public void restrainViewPort(float offLeft, float offTop, float offRight, float offBottom) {
     // 绘制的内容区域的大小
-    mContentRect.set(offLeft, offTop, mWidth - offRight, mHeight - offBottom);
+    mContentRect.set(offLeft, offTop, mWidth - offRight, mHeight * ratio - offBottom);
   }
 
   /**

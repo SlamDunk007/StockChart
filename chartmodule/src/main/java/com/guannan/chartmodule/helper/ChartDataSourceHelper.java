@@ -1,8 +1,11 @@
 package com.guannan.chartmodule.helper;
 
 import android.graphics.RectF;
-import com.guannan.chartmodule.chart.ViewPortHandler;
+import com.guannan.chartmodule.chart.KLineChartView;
+import com.guannan.chartmodule.chart.VolumeView;
 import com.guannan.chartmodule.data.KLineToDrawItem;
+import com.guannan.chartmodule.inter.OnChartDataCountListener;
+import com.guannan.chartmodule.utils.DataUtils;
 import com.guannan.chartmodule.utils.DateUtils;
 import com.guannan.simulateddata.entity.KLineItem;
 import java.util.ArrayList;
@@ -34,6 +37,11 @@ public class ChartDataSourceHelper {
   public float minPrice = Float.MAX_VALUE;
 
   /**
+   * 成交量最小值
+   */
+  public float maxVolume = Float.MIN_VALUE;
+
+  /**
    * 行情图当前屏开始的位置
    */
   public int startIndex;
@@ -48,14 +56,13 @@ public class ChartDataSourceHelper {
    */
   private List<KLineToDrawItem> kLineItems;
 
-  /**
-   * 尺寸辅助类
-   */
-  private ViewPortHandler mViewPortHandler;
-
   private List<KLineItem> mKList;
 
   private OnChartDataCountListener<List<KLineToDrawItem>> mReadyListener;
+
+  private KLineChartView mKLineChartView;
+
+  private VolumeView mVolumeView;
 
   /**
    * 最大值最小值放大系数
@@ -69,9 +76,12 @@ public class ChartDataSourceHelper {
   /**
    * 初始化行情图初始数据
    */
-  public void initKDrawData(List<KLineItem> klineList, ViewPortHandler viewPortHandler) {
+  public void initKDrawData(List<KLineItem> klineList,
+      KLineChartView kLineChartView,
+      VolumeView volumeView) {
     this.mKList = klineList;
-    this.mViewPortHandler = viewPortHandler;
+    this.mKLineChartView = kLineChartView;
+    this.mVolumeView = volumeView;
     // K线首次当前屏初始位置
     startIndex = Math.max(0, klineList.size() - K_D_COLUMNS);
     // k线首次当前屏结束位置
@@ -89,6 +99,7 @@ public class ChartDataSourceHelper {
     // 重置最大最小值
     maxPrice = Float.MIN_VALUE;
     minPrice = Float.MAX_VALUE;
+    maxVolume = Float.MIN_VALUE;
     if (kLineItems == null) {
       kLineItems = new ArrayList<>();
     } else {
@@ -97,7 +108,7 @@ public class ChartDataSourceHelper {
 
     // 根据偏移距离计算偏移几天
     int offCount = (int) ((distance * ChartDataSourceHelper.K_D_COLUMNS)
-        / mViewPortHandler.mContentRect.width());
+        / mKLineChartView.getViewPortHandler().mContentRect.width());
     // 计算移动后的开始和结束位置
     startIndex = startIndex - offCount;
     endIndex = startIndex + K_D_COLUMNS;
@@ -115,6 +126,9 @@ public class ChartDataSourceHelper {
         if (kLineItem.low < minPrice) {
           minPrice = kLineItem.low;
         }
+        if (kLineItem.volume > maxVolume) {
+          maxVolume = kLineItem.volume;
+        }
       }
     }
 
@@ -125,6 +139,7 @@ public class ChartDataSourceHelper {
     // 最大值最小值差值
     float diffPrice = maxPrice - minPrice;
 
+    RectF contentRect = mKLineChartView.getViewPortHandler().mContentRect;
     // 计算当前屏幕每一个蜡烛线的位置和涨跌情况
     for (int i = startIndex, k = 0; i < endIndex; i++, k++) {
       KLineItem kLineItem = mKList.get(i);
@@ -138,7 +153,6 @@ public class ChartDataSourceHelper {
       // 最低价
       float low = kLineItem.low;
 
-      RectF contentRect = mViewPortHandler.mContentRect;
       KLineToDrawItem drawItem = new KLineToDrawItem();
       // 计算蜡烛线
       float scaleY_open = (maxPrice - open) / diffPrice;
@@ -170,11 +184,17 @@ public class ChartDataSourceHelper {
         }
       }
 
+      // 计算成交量
+      if (Math.abs(maxVolume) > DataUtils.EPSILON) {
+        RectF volumeRct = mVolumeView.getViewPortHandler().mContentRect;
+        float scaleVolume = (maxVolume - kLineItem.volume) / maxVolume;
+        drawItem.volumeRect = getRect(volumeRct, k, scaleVolume, 1);
+      }
       kLineItems.add(drawItem);
     }
     // 数据准备完毕
     if (mReadyListener != null) {
-      mReadyListener.onReady(kLineItems,maxPrice,minPrice);
+      mReadyListener.onReady(kLineItems, maxPrice, minPrice);
     }
   }
 

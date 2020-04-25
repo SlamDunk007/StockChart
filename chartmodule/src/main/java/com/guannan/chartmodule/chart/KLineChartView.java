@@ -8,21 +8,14 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import com.guannan.chartmodule.R;
 import com.guannan.chartmodule.data.KLineToDrawItem;
-import com.guannan.chartmodule.gesture.ChartGestureListener;
-import com.guannan.chartmodule.gesture.ChartTouchListener;
-import com.guannan.chartmodule.helper.ChartDataSourceHelper;
-import com.guannan.chartmodule.helper.OnChartDataCountListener;
 import com.guannan.chartmodule.utils.DisplayUtils;
 import com.guannan.chartmodule.utils.LogUtils;
 import com.guannan.chartmodule.utils.NumberFormatUtils;
 import com.guannan.chartmodule.utils.PaintUtils;
-import com.guannan.simulateddata.entity.KLineItem;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,12 +23,9 @@ import java.util.List;
  * @date on 2020-03-07 15:56
  * @des K线的主要实现类
  */
-public class KLineChartView extends BaseChartView
-    implements ChartGestureListener, OnChartDataCountListener<List<KLineToDrawItem>> {
+public class KLineChartView extends BaseChartView {
 
-  private ChartTouchListener mChartLineTouchListener;
   private Paint mPaintRed;
-  private ChartDataSourceHelper mHelper;
   private Paint mPaintGreen;
   private List<KLineToDrawItem> mToDrawList;
   private float maxPrice;
@@ -55,8 +45,6 @@ public class KLineChartView extends BaseChartView
 
   public KLineChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    mChartLineTouchListener = new ChartTouchListener(this);
-    mChartLineTouchListener.setChartGestureListener(this);
 
     mPaintRed = new Paint();
     mPaintRed.setColor(ContextCompat.getColor(context, R.color.color_fd4331));
@@ -66,13 +54,19 @@ public class KLineChartView extends BaseChartView
 
     TEXT_PADDING = DisplayUtils.dip2px(context, 5);
     CAL_PADDING = DisplayUtils.dip2px(context, 3);
+
+    mViewPortHandler.setContentRatio(0.9f);
+  }
+
+  public ViewPortHandler getViewPortHandler() {
+    return mViewPortHandler;
   }
 
   @Override
   protected void drawFrame(Canvas canvas) {
     super.drawFrame(canvas);
     drawOutLine(canvas);
-    if (mToDrawList == null) {
+    if (mToDrawList == null || mToDrawList.isEmpty()) {
       return;
     }
     for (int i = 0; i < mToDrawList.size(); i++) {
@@ -122,6 +116,7 @@ public class KLineChartView extends BaseChartView
     minPrice = NumberFormatUtils.format(minPrice, 2);
     Rect rect = new Rect();
     PaintUtils.TEXT_PAINT.getTextBounds(maxPrice + "", 0, String.valueOf(maxPrice).length(), rect);
+    LogUtils.d(maxPrice + "------");
     canvas.drawText(maxPrice + "", contentRect.left + CAL_PADDING,
         contentRect.top + rect.height() + CAL_PADDING,
         PaintUtils.TEXT_PAINT);
@@ -141,69 +136,8 @@ public class KLineChartView extends BaseChartView
   /**
    * 初始化数据
    */
-  public void initData(ArrayList<KLineItem> klineList) {
-    if (mViewPortHandler != null) {
-      int dip10 = DisplayUtils.dip2px(getContext(), 10);
-      int dip20 = DisplayUtils.dip2px(getContext(), 20);
-      mViewPortHandler.restrainViewPort(dip10, dip20, dip10, dip20);
-    }
-    if (mHelper == null) {
-      mHelper = new ChartDataSourceHelper(this);
-    }
-    mHelper.initKDrawData(klineList, mViewPortHandler);
-  }
-
-  @Override
-  public void onChartGestureStart(MotionEvent me,
-      ChartTouchListener.ChartGesture lastPerformedGesture) {
-    LogUtils.d("触摸开始");
-  }
-
-  @Override
-  public void onChartGestureEnd(MotionEvent me,
-      ChartTouchListener.ChartGesture lastPerformedGesture) {
-    LogUtils.d("触摸结束");
-  }
-
-  @Override
-  public void onChartLongPressed(MotionEvent me) {
-
-  }
-
-  @Override
-  public void onChartDoubleTapped(MotionEvent me) {
-
-  }
-
-  @Override
-  public void onChartSingleTapped(MotionEvent me) {
-
-  }
-
-  @Override
-  public void onChartFling(float distanceX) {
-    if (mHelper != null) {
-      mHelper.initKMoveDrawData(distanceX);
-    }
-    invalidateView();
-  }
-
-  @Override
-  public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
-  }
-
-  @Override
-  public void onChartTranslate(MotionEvent me, float dX) {
-    if (mHelper != null) {
-      mHelper.initKMoveDrawData(dX);
-    }
-    invalidateView();
-  }
-
-  @Override
-  public void onReady(List<KLineToDrawItem> data, float maxValue, float minValue) {
-    this.mToDrawList = data;
+  public void initData(List<KLineToDrawItem> klineList, float maxValue, float minValue) {
+    this.mToDrawList = klineList;
     this.maxPrice = maxValue;
     this.minPrice = minValue;
     invalidateView();
