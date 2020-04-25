@@ -1,5 +1,7 @@
 package com.guannan.chartmodule.inter;
 
+import com.guannan.chartmodule.data.ExtremeValue;
+
 /**
  * @author guannan
  * @date on 2020-04-11 13:57
@@ -7,5 +9,5 @@ package com.guannan.chartmodule.inter;
  */
 public interface OnChartDataCountListener<T> {
 
-  void onReady(T data, float maxValue, float minValue);
+  void onReady(T data, ExtremeValue extremeValue);
 }

@@ -9,15 +9,20 @@ import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import com.guannan.chartmodule.R;
+import com.guannan.chartmodule.helper.ChartTouchHelper;
 import com.guannan.chartmodule.inter.TouchResponseListener;
 import com.guannan.chartmodule.utils.PaintUtils;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author guannan
@@ -89,6 +94,17 @@ public abstract class BaseChartView extends View implements TouchResponseListene
    */
   protected ViewPortHandler mViewPortHandler;
 
+  /**
+   * 红色画笔
+   */
+  protected Paint mPaintRed;
+
+  /**
+   * 绿色画笔
+   */
+  protected Paint mPaintGreen;
+  private ReentrantLock mLock;
+
   public BaseChartView(Context context) {
     this(context, null);
   }
@@ -102,6 +118,14 @@ public abstract class BaseChartView extends View implements TouchResponseListene
     super(context, attrs, defStyleAttr);
 
     mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    mPaintRed = new Paint();
+    mPaintRed.setColor(ContextCompat.getColor(context, R.color.color_fd4331));
+    mPaintRed.setStyle(Paint.Style.FILL);
+
+    mPaintGreen = new Paint();
+    mPaintGreen.setColor(ContextCompat.getColor(context, R.color.color_05aa3b));
+    mPaintGreen.setStyle(Paint.Style.FILL);
 
     // 行情图尺寸等辅助方法
     mViewPortHandler = new ViewPortHandler();
@@ -117,11 +141,17 @@ public abstract class BaseChartView extends View implements TouchResponseListene
         new ThreadPoolExecutor(1, 1, 1000L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
     mDoubleBuffering = new DoubleBuffering(this);
+    mLock = new ReentrantLock(true);
   }
 
   private void initHandler() {
     mHandler = new ChartHandler(this);
   }
+
+  public abstract void onChartLongPressed(MotionEvent me);
+
+  public abstract void onChartGestureEnd(MotionEvent me,
+      ChartTouchHelper.ChartGesture lastPerformedGesture);
 
   /**
    * 防止内存泄露的Handler
@@ -256,6 +286,7 @@ public abstract class BaseChartView extends View implements TouchResponseListene
     @Override
     public void run() {
       if (mChartView != null) {
+        mLock.lock();
         BaseChartView baseChartView = mChartView.get();
         if (baseChartView != null && baseChartView.mRealCanvas != null) {
           baseChartView.drawFrame(baseChartView.mRealCanvas);
@@ -265,6 +296,7 @@ public abstract class BaseChartView extends View implements TouchResponseListene
             baseChartView.mHandler.sendEmptyMessage(baseChartView.REFRESH);
           }
         }
+        mLock.unlock();
       }
     }
   }

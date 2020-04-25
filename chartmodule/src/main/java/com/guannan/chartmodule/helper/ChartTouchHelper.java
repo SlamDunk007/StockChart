@@ -72,6 +72,11 @@ public class ChartTouchHelper
   protected static final int X_ZOOM = 2;
 
   /**
+   * 长按
+   */
+  protected static final int LONG_PRESS = 3;
+
+  /**
    * 默认的手势动作
    */
   private ChartGesture mLastGesture = ChartGesture.NONE;
@@ -211,6 +216,11 @@ public class ChartTouchHelper
               }
             }
           }
+        } else if (mTouchMode == LONG_PRESS) {
+          mLastGesture = ChartGesture.LONG_PRESS;
+          if (mChartGestureListener != null) {
+            mChartGestureListener.onChartLongPressed(event);
+          }
         } else if (mTouchMode == NONE) {
           // 移动之后重置起始位置
           saveTouchStart(event);
@@ -241,9 +251,9 @@ public class ChartTouchHelper
 
   @Override
   public void onLongPress(MotionEvent e) {
-    mLastGesture = ChartGesture.LONG_PRESS;
+    mTouchMode = LONG_PRESS;
     if (mChartGestureListener != null) {
-      mChartGestureListener.onChartDoubleTapped(e);
+      mChartGestureListener.onChartLongPressed(e);
     }
   }
 
@@ -301,6 +311,7 @@ public class ChartTouchHelper
    */
   @Override
   public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
     if (mChartGestureListener != null) {
       scrollX -= distanceX;
       // 当X轴移动距离大于18px认为是移动

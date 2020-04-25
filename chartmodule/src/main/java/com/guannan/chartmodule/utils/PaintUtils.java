@@ -30,6 +30,12 @@ public class PaintUtils {
   public static Paint TEXT_PAINT = new Paint();
   public final static int C_FRAME_FONT = 0xff747985;
 
+  /**
+   * 选中十字线
+   */
+  public static Paint FOCUS_LINE_PAINT = new Paint();
+  public final static int C_FOCUS_BG_BLACK = 0xff000000;
+
   static {
 
     GRID_DIVIDER.setColor(COLOR_GRID_DIVIDER);
@@ -44,6 +50,9 @@ public class PaintUtils {
 
     TEXT_PAINT.setAntiAlias(true);
     TEXT_PAINT.setColor(C_FRAME_FONT);
+
+    FOCUS_LINE_PAINT.setColor(C_FOCUS_BG_BLACK);
+    FOCUS_LINE_PAINT.setStrokeWidth(2);
   }
 
   public static void init(Context context) {

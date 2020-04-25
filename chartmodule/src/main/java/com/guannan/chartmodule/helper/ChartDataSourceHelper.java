@@ -1,8 +1,9 @@
 package com.guannan.chartmodule.helper;
 
 import android.graphics.RectF;
-import com.guannan.chartmodule.chart.KLineChartView;
-import com.guannan.chartmodule.chart.VolumeView;
+import com.guannan.chartmodule.chart.KMasterChartView;
+import com.guannan.chartmodule.chart.KSubChartView;
+import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
 import com.guannan.chartmodule.inter.OnChartDataCountListener;
 import com.guannan.chartmodule.utils.DataUtils;
@@ -60,9 +61,9 @@ public class ChartDataSourceHelper {
 
   private OnChartDataCountListener<List<KLineToDrawItem>> mReadyListener;
 
-  private KLineChartView mKLineChartView;
+  private KMasterChartView mKLineChartView;
 
-  private VolumeView mVolumeView;
+  private KSubChartView mVolumeView;
 
   /**
    * 最大值最小值放大系数
@@ -77,8 +78,8 @@ public class ChartDataSourceHelper {
    * 初始化行情图初始数据
    */
   public void initKDrawData(List<KLineItem> klineList,
-      KLineChartView kLineChartView,
-      VolumeView volumeView) {
+      KMasterChartView kLineChartView,
+      KSubChartView volumeView) {
     this.mKList = klineList;
     this.mKLineChartView = kLineChartView;
     this.mVolumeView = volumeView;
@@ -96,45 +97,14 @@ public class ChartDataSourceHelper {
    */
   public void initKMoveDrawData(float distance) {
 
-    // 重置最大最小值
-    maxPrice = Float.MIN_VALUE;
-    minPrice = Float.MAX_VALUE;
-    maxVolume = Float.MIN_VALUE;
-    if (kLineItems == null) {
-      kLineItems = new ArrayList<>();
-    } else {
-      kLineItems.clear();
-    }
+    // 重置默认值
+    resetDefaultValue();
 
-    // 根据偏移距离计算偏移几天
-    int offCount = (int) ((distance * ChartDataSourceHelper.K_D_COLUMNS)
-        / mKLineChartView.getViewPortHandler().mContentRect.width());
-    // 计算移动后的开始和结束位置
-    startIndex = startIndex - offCount;
-    endIndex = startIndex + K_D_COLUMNS;
+    // 计算当前屏幕开始和结束的位置
+    countStartEndPos(distance);
 
-    if (endIndex > mKList.size()) {
-      startIndex = mKList.size() - K_D_COLUMNS;
-      endIndex = startIndex + K_D_COLUMNS;
-    }
-    for (int i = startIndex; i < endIndex; i++) {
-      KLineItem kLineItem = mKList.get(i);
-      if (kLineItem != null) {
-        if (kLineItem.high > maxPrice) {
-          maxPrice = kLineItem.high;
-        }
-        if (kLineItem.low < minPrice) {
-          minPrice = kLineItem.low;
-        }
-        if (kLineItem.volume > maxVolume) {
-          maxVolume = kLineItem.volume;
-        }
-      }
-    }
-
-    // 最大值、最小值缩放系数
-    maxPrice = maxPrice * (1 + scale);
-    minPrice = minPrice * (1 - scale);
+    // 计算蜡烛线价格最大最小值，成交量最大值
+    ExtremeValue extremeValue = countMaxMinValue();
 
     // 最大值最小值差值
     float diffPrice = maxPrice - minPrice;
@@ -194,8 +164,70 @@ public class ChartDataSourceHelper {
     }
     // 数据准备完毕
     if (mReadyListener != null) {
-      mReadyListener.onReady(kLineItems, maxPrice, minPrice);
+      mReadyListener.onReady(kLineItems, extremeValue);
     }
+  }
+
+  /**
+   * 重置默认的最大值、最小值
+   */
+  private void resetDefaultValue() {
+    // 重置最大最小值
+    maxPrice = Float.MIN_VALUE;
+    minPrice = Float.MAX_VALUE;
+    maxVolume = Float.MIN_VALUE;
+    if (kLineItems == null) {
+      kLineItems = new ArrayList<>();
+    } else {
+      kLineItems.clear();
+    }
+  }
+
+  /**
+   * 计算当前屏幕开始和结束的位置
+   */
+  private void countStartEndPos(float distance) {
+    // 根据偏移距离计算偏移几天
+    int offCount = (int) ((distance * ChartDataSourceHelper.K_D_COLUMNS)
+        / mKLineChartView.getViewPortHandler().mContentRect.width());
+    // 计算移动后的开始和结束位置
+    startIndex = startIndex - offCount;
+    endIndex = startIndex + K_D_COLUMNS;
+
+    if (endIndex > mKList.size()) {
+      startIndex = mKList.size() - K_D_COLUMNS;
+      endIndex = startIndex + K_D_COLUMNS;
+    }
+  }
+
+  /**
+   * 计算蜡烛线价格最大最小值，成交量最大值
+   */
+  private ExtremeValue countMaxMinValue() {
+    for (int i = startIndex; i < endIndex; i++) {
+      KLineItem kLineItem = mKList.get(i);
+      if (kLineItem != null) {
+        if (kLineItem.high > maxPrice) {
+          maxPrice = kLineItem.high;
+        }
+        if (kLineItem.low < minPrice) {
+          minPrice = kLineItem.low;
+        }
+        if (kLineItem.volume > maxVolume) {
+          maxVolume = kLineItem.volume;
+        }
+      }
+    }
+    // 最大值、最小值缩放系数
+    maxPrice = maxPrice * (1 + scale);
+    maxVolume = maxVolume * (1 + scale);
+    minPrice = minPrice * (1 - scale);
+
+    ExtremeValue extremeValue = new ExtremeValue();
+    extremeValue.maxPrice = maxPrice;
+    extremeValue.minPrice = minPrice;
+    extremeValue.maxVolume = maxVolume;
+    return extremeValue;
   }
 
   /**

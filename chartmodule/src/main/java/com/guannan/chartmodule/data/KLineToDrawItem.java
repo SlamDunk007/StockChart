@@ -34,4 +34,9 @@ public class KLineToDrawItem implements Serializable {
    * 成交量
    */
   public RectF volumeRect;
+
+  /**
+   * 最大最小值
+   */
+  public ExtremeValue extremeValue;
 }

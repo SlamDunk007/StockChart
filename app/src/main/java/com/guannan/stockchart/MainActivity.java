@@ -4,14 +4,14 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
-import com.guannan.chartmodule.chart.ChartContainer;
-import com.guannan.chartmodule.chart.KLineChartView;
-import com.guannan.chartmodule.chart.VolumeView;
+import com.guannan.chartmodule.chart.MarketFigureChart;
+import com.guannan.chartmodule.chart.KMasterChartView;
+import com.guannan.chartmodule.chart.KSubChartView;
+import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
-import com.guannan.chartmodule.inter.PressChangeListener;
 import com.guannan.chartmodule.helper.ChartDataSourceHelper;
 import com.guannan.chartmodule.inter.OnChartDataCountListener;
-import com.guannan.chartmodule.utils.DisplayUtils;
+import com.guannan.chartmodule.inter.PressChangeListener;
 import com.guannan.simulateddata.SimulatedManager;
 import com.guannan.simulateddata.parser.KLineParser;
 import java.util.List;
@@ -20,35 +20,34 @@ public class MainActivity extends AppCompatActivity
     implements OnChartDataCountListener<List<KLineToDrawItem>>, PressChangeListener {
 
   private ChartDataSourceHelper mHelper;
-  private KLineChartView mKLineChartView;
-  private VolumeView mVolumeView;
-  private ChartContainer mChartContainer;
+  private KMasterChartView mKLineChartView;
+  private KSubChartView mVolumeView;
+  private MarketFigureChart mMarketFigureChart;
+  private KSubChartView mVolumeView2;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    mChartContainer = findViewById(R.id.chart_container);
+    mMarketFigureChart = findViewById(R.id.chart_container);
 
-    mKLineChartView = new KLineChartView(this);
-    mChartContainer.addChildChart(mKLineChartView, 200);
-    //mKLineChartView.getViewPortHandler()
-    //    .restrainViewPort(DisplayUtils.dip2px(this, 10), DisplayUtils.dip2px(this, 20),
-    //        DisplayUtils.dip2px(this, 10), DisplayUtils.dip2px(this, 20));
+    mKLineChartView = new KMasterChartView(this);
+    mMarketFigureChart.addChildChart(mKLineChartView, 200);
 
-    mVolumeView = new VolumeView(this);
-    mChartContainer.addChildChart(mVolumeView, 100);
+    mVolumeView = new KSubChartView(this);
+    mMarketFigureChart.addChildChart(mVolumeView, 100);
 
-    mChartContainer.setPressChangeListener(this);
+    mVolumeView2 = new KSubChartView(this);
+    mMarketFigureChart.addChildChart(mVolumeView2, 100);
+
+    mMarketFigureChart.setPressChangeListener(this);
   }
 
   public void parse(View view) {
     String kLineData = SimulatedManager.getKLineData(this, SimulatedManager.KLineTotalJson);
     KLineParser parser = new KLineParser(kLineData);
     parser.parseKlineData();
-
-    //mChartContainer.setData(parser.klineList);
 
     if (mHelper == null) {
       mHelper = new ChartDataSourceHelper(this);
@@ -57,9 +56,10 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public void onReady(List<KLineToDrawItem> data, float maxValue, float minValue) {
-    mKLineChartView.initData(data, maxValue, minValue);
-    mVolumeView.initData(data);
+  public void onReady(List<KLineToDrawItem> data, ExtremeValue extremeValue) {
+    mKLineChartView.initData(data, extremeValue);
+    mVolumeView.initData(data, extremeValue);
+    mVolumeView2.initData(data, extremeValue);
   }
 
   @Override

@@ -6,32 +6,34 @@ import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
-import com.guannan.chartmodule.inter.ChartGestureListener;
 import com.guannan.chartmodule.helper.ChartTouchHelper;
+import com.guannan.chartmodule.inter.ChartGestureListener;
 import com.guannan.chartmodule.inter.PressChangeListener;
 import com.guannan.chartmodule.utils.DisplayUtils;
 
 /**
  * @author guannan
  * @date on 2020-04-21 11:54
- * @des TODO
+ * @des 行情图
+ * #######################（1）动态添加主图和副图 ########################
+ * #######################（2）处理主图和副图的手势 ######################
  */
-public class ChartContainer extends LinearLayout implements ChartGestureListener {
+public class MarketFigureChart extends LinearLayout implements ChartGestureListener {
 
   private Context mContext;
 
   private PressChangeListener mPressChangeListener;
 
-  public ChartContainer(Context context) {
+  public MarketFigureChart(Context context) {
     this(context, null);
   }
 
-  public ChartContainer(Context context,
+  public MarketFigureChart(Context context,
       @Nullable AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public ChartContainer(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+  public MarketFigureChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     this.mContext = context;
     setOrientation(VERTICAL);
@@ -62,12 +64,22 @@ public class ChartContainer extends LinearLayout implements ChartGestureListener
   @Override
   public void onChartGestureEnd(MotionEvent me,
       ChartTouchHelper.ChartGesture lastPerformedGesture) {
-
+    for (int i = 0; i < getChildCount(); i++) {
+      BaseChartView baseChartView = (BaseChartView) getChildAt(i);
+      if (baseChartView != null) {
+        baseChartView.onChartGestureEnd(me,lastPerformedGesture);
+      }
+    }
   }
 
   @Override
   public void onChartLongPressed(MotionEvent me) {
-
+    for (int i = 0; i < getChildCount(); i++) {
+      BaseChartView baseChartView = (BaseChartView) getChildAt(i);
+      if (baseChartView != null) {
+        baseChartView.onChartLongPressed(me);
+      }
+    }
   }
 
   @Override
