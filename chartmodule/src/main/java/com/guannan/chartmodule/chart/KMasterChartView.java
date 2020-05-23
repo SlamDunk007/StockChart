@@ -136,6 +136,9 @@ public class KMasterChartView extends BaseChartView {
    * 绘制行情图边框
    */
   private void drawOutLine(Canvas canvas) {
+    if (mExtremeValue == null) {
+      return;
+    }
     RectF contentRect = mViewPortHandler.mContentRect;
     if (contentRect != null) {
 
@@ -158,6 +161,7 @@ public class KMasterChartView extends BaseChartView {
         PaintUtils.TEXT_PAINT);
     float perHeight = contentRect.height() / 4;
     float perPrice = NumFormatUtils.formatFloat((maxPrice - minPrice) / 4, 2);
+
     for (int i = 1; i <= 3; i++) {
       canvas.drawLine(contentRect.left, contentRect.top + perHeight * i, contentRect.right,
           contentRect.top + perHeight * i, PaintUtils.GRID_INNER_DIVIDER);
@@ -165,6 +169,7 @@ public class KMasterChartView extends BaseChartView {
       canvas.drawText(value + "", contentRect.left + CAL_PADDING,
           contentRect.top + perHeight * i - CAL_PADDING, PaintUtils.TEXT_PAINT);
     }
+
     canvas.drawText(minPrice + "", contentRect.left + CAL_PADDING, contentRect.bottom - CAL_PADDING,
         PaintUtils.TEXT_PAINT);
   }

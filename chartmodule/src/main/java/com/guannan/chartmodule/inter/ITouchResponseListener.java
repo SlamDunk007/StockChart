@@ -5,6 +5,6 @@ package com.guannan.chartmodule.inter;
  * @date on 2020-04-21 20:01
  * @des 各种手势
  */
-public interface TouchResponseListener {
+public interface ITouchResponseListener {
 
 }

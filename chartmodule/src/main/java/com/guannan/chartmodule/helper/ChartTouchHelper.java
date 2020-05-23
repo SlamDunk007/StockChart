@@ -12,7 +12,7 @@ import android.view.ViewConfiguration;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import androidx.core.view.GestureDetectorCompat;
-import com.guannan.chartmodule.inter.ChartGestureListener;
+import com.guannan.chartmodule.inter.IChartGestureListener;
 import com.guannan.chartmodule.utils.DataUtils;
 import com.guannan.chartmodule.utils.DisplayUtils;
 
@@ -94,7 +94,7 @@ public class ChartTouchHelper
   /**
    * 手势监听回调
    */
-  private ChartGestureListener mChartGestureListener;
+  private IChartGestureListener mChartGestureListener;
 
   /**
    * 多指触摸的时候，两个手指之间的中点
@@ -146,7 +146,7 @@ public class ChartTouchHelper
   /**
    * 设置手势监听回调
    */
-  public void setChartGestureListener(ChartGestureListener listener) {
+  public void setChartGestureListener(IChartGestureListener listener) {
     this.mChartGestureListener = listener;
   }
 
@@ -380,13 +380,13 @@ public class ChartTouchHelper
     private final int duration;
     private Handler mHandler;
     private final Interpolator interpolator;
-    private ChartGestureListener mGestureListener;
+    private IChartGestureListener mGestureListener;
     private boolean continueRunning = true;
     private long startTime = -1;
     private float flingX;
 
     public FlingRunnable(int startX, int toX, int duration, Handler handler,
-        ChartGestureListener gestureListener) {
+        IChartGestureListener gestureListener) {
       this.fromX = startX;
       this.toX = toX;
       this.duration = Math.abs(duration);

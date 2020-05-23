@@ -73,7 +73,7 @@ public class KSubChartView extends BaseChartView {
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     mViewPortHandler.restrainViewPort(DisplayUtils.dip2px(getContext(), 10),
-        DisplayUtils.dip2px(getContext(), 20), DisplayUtils.dip2px(getContext(), 10),
+        0, DisplayUtils.dip2px(getContext(), 10),
         0);
     super.onSizeChanged(w, h, oldw, oldh);
   }
@@ -85,11 +85,12 @@ public class KSubChartView extends BaseChartView {
   @Override
   protected void drawFrame(Canvas canvas) {
     super.drawFrame(canvas);
-    // 绘制边框和刻度
-    drawOutLine(canvas);
     if (mToDrawList == null || mToDrawList.isEmpty()) {
       return;
     }
+
+    // 绘制边框和刻度
+    drawOutLine(canvas);
 
     RectF contentRect = mViewPortHandler.mContentRect;
 
@@ -111,8 +112,12 @@ public class KSubChartView extends BaseChartView {
     }
 
     if (mFocusPoint != null && !onTapUp) {
-      if(contentRect.contains(mFocusPoint.x,mFocusPoint.y)){
-        canvas.drawLine(contentRect.left, mFocusPoint.y, contentRect.right, mFocusPoint.y,
+
+      // 附图实际y轴位置
+      float focusY = mFocusPoint.y - getY() - contentRect.top;
+
+      if (contentRect.contains(mFocusPoint.x, focusY)) {
+        canvas.drawLine(contentRect.left, focusY, contentRect.right, focusY,
             PaintUtils.FOCUS_LINE_PAINT);
       }
       canvas.drawLine(mFocusPoint.x, contentRect.top, mFocusPoint.x, contentRect.bottom,

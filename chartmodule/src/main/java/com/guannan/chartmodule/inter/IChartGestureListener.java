@@ -8,7 +8,7 @@ import com.guannan.chartmodule.helper.ChartTouchHelper;
  * @date on 2020-03-14 11:28
  * @des 手势识别监听
  */
-public interface ChartGestureListener {
+public interface IChartGestureListener {
 
   /**
    * 当手势开始的时候触发，一般是(ACTION_DOWN)

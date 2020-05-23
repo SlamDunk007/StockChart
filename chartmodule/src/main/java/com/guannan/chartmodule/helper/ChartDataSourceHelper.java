@@ -5,7 +5,7 @@ import com.guannan.chartmodule.chart.KMasterChartView;
 import com.guannan.chartmodule.chart.KSubChartView;
 import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
-import com.guannan.chartmodule.inter.OnChartDataCountListener;
+import com.guannan.chartmodule.inter.IChartDataCountListener;
 import com.guannan.chartmodule.utils.DataUtils;
 import com.guannan.chartmodule.utils.DateUtils;
 import com.guannan.simulateddata.entity.KLineItem;
@@ -59,7 +59,7 @@ public class ChartDataSourceHelper {
 
   private List<KLineItem> mKList;
 
-  private OnChartDataCountListener<List<KLineToDrawItem>> mReadyListener;
+  private IChartDataCountListener<List<KLineToDrawItem>> mReadyListener;
 
   private KMasterChartView mKLineChartView;
 
@@ -70,7 +70,7 @@ public class ChartDataSourceHelper {
    */
   private float scale = 0.02f;
 
-  public ChartDataSourceHelper(OnChartDataCountListener<List<KLineToDrawItem>> listener) {
+  public ChartDataSourceHelper(IChartDataCountListener<List<KLineToDrawItem>> listener) {
     this.mReadyListener = listener;
   }
 

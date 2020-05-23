@@ -7,22 +7,22 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import com.guannan.chartmodule.helper.ChartTouchHelper;
-import com.guannan.chartmodule.inter.ChartGestureListener;
-import com.guannan.chartmodule.inter.PressChangeListener;
+import com.guannan.chartmodule.inter.IChartGestureListener;
+import com.guannan.chartmodule.inter.IPressChangeListener;
 import com.guannan.chartmodule.utils.DisplayUtils;
 
 /**
  * @author guannan
  * @date on 2020-04-21 11:54
- * @des 行情图
+ * @des 行情图容器
  * #######################（1）动态添加主图和副图 ########################
  * #######################（2）处理主图和副图的手势 ######################
  */
-public class MarketFigureChart extends LinearLayout implements ChartGestureListener {
+public class MarketFigureChart extends LinearLayout implements IChartGestureListener {
 
   private Context mContext;
 
-  private PressChangeListener mPressChangeListener;
+  private IPressChangeListener mPressChangeListener;
 
   public MarketFigureChart(Context context) {
     this(context, null);
@@ -39,11 +39,14 @@ public class MarketFigureChart extends LinearLayout implements ChartGestureListe
     setOrientation(VERTICAL);
     setLayoutParams(
         new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
+    // 设置容器的手势监听
     ChartTouchHelper chartTouchHelper = new ChartTouchHelper(this);
     chartTouchHelper.setChartGestureListener(this);
   }
 
+  /**
+   * 向容器中添加主图、附图视图
+   */
   public void addChildChart(BaseChartView childView, float height) {
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -51,7 +54,7 @@ public class MarketFigureChart extends LinearLayout implements ChartGestureListe
     addView(childView, params);
   }
 
-  public void setPressChangeListener(PressChangeListener listener) {
+  public void setPressChangeListener(IPressChangeListener listener) {
     this.mPressChangeListener = listener;
   }
 
@@ -67,7 +70,7 @@ public class MarketFigureChart extends LinearLayout implements ChartGestureListe
     for (int i = 0; i < getChildCount(); i++) {
       BaseChartView baseChartView = (BaseChartView) getChildAt(i);
       if (baseChartView != null) {
-        baseChartView.onChartGestureEnd(me,lastPerformedGesture);
+        baseChartView.onChartGestureEnd(me, lastPerformedGesture);
       }
     }
   }

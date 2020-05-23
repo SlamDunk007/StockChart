@@ -7,7 +7,7 @@ import android.view.MotionEvent;
  * @date on 2020-04-21 20:09
  * @des TODO
  */
-public interface PressChangeListener {
+public interface IPressChangeListener {
 
   void onChartTranslate(MotionEvent me, float dX);
 
