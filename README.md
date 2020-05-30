@@ -9,7 +9,7 @@
 
 # 效果图
 
-<img src="https://github.com/SlamDunk007/StockChart/blob/master/stockchart.png" style="zoom:30%;" /> ![](https://github.com/SlamDunk007/StockChart/blob/master/showResult.gif)
+<img src="https://github.com/SlamDunk007/StockChart/blob/master/stockChart.png" width="400" />  <img src="https://github.com/SlamDunk007/StockChart/blob/master/showResult.gif" width="400"/>
 
 # 行情图绘制步骤
 
