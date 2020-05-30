@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="100dp"
+  android:background="#31465E">
+
+  <TextView
+    android:id="@+id/tv_price"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp"
+    android:text="800.00XXX"
+    android:textColor="@color/color_fd4331"
+    android:textSize="26sp"
+    android:textStyle="bold" />
+
+  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/tv_price"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="15dp"
+    android:orientation="horizontal">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="=4800.00CNY"
+      android:textColor="#d2d2d2"
+      android:textSize="15sp" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="20dp"
+      android:text="-0.34%"
+      android:textColor="@color/color_fd4331"
+      android:textSize="15sp" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_marginTop="15dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical">
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="高  901.31"
+      android:textColor="@color/color_e5e6f2"
+      android:textSize="15sp" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:text="低  709.55"
+      android:textColor="@color/color_e5e6f2"
+      android:textSize="15sp" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:text="24H  100034"
+      android:textColor="@color/color_e5e6f2"
+      android:textSize="15sp" />
+
+  </LinearLayout>
+
+</RelativeLayout>

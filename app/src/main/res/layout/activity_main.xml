@@ -4,17 +4,91 @@
   android:layout_height="match_parent"
   android:orientation="vertical">
 
-  <com.guannan.chartmodule.chart.MarketFigureChart
-    android:id="@+id/chart_container"
+  <include layout="@layout/pankou_layout" />
+  <View
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="1dp"
+    android:background="#e5e5e5" />
 
-  <Button
-    android:id="@+id/btn"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:onClick="parse"
-    android:text="parseKline" />
+  <RadioGroup
+    android:id="@+id/rbtn_group"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal">
+
+    <RadioButton
+      android:id="@+id/rbtn_15"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@drawable/selector_line_bg"
+      android:button="@null"
+      android:gravity="center"
+      android:text="15分钟" />
+    <View
+      android:layout_width="0.5dp"
+      android:layout_height="match_parent"
+      android:background="#cccccc" />
+    <RadioButton
+      android:id="@+id/rbtn_1h"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@drawable/selector_line_bg"
+      android:button="@null"
+      android:gravity="center"
+      android:text="1小时" />
+    <View
+      android:layout_width="0.5dp"
+      android:layout_height="match_parent"
+      android:background="#cccccc" />
+    <RadioButton
+      android:id="@+id/rbtn_4h"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@drawable/selector_line_bg"
+      android:button="@null"
+      android:gravity="center"
+      android:text="4小时" />
+
+    <View
+      android:layout_width="0.5dp"
+      android:layout_height="match_parent"
+      android:background="#cccccc" />
+    <RadioButton
+      android:id="@+id/rbtn_1d"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@drawable/selector_line_bg"
+      android:button="@null"
+      android:gravity="center"
+      android:text="1天" />
+  </RadioGroup>
+
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="#e5e5e5" />
+
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.guannan.chartmodule.chart.MarketFigureChart
+      android:id="@+id/chart_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+    <ProgressBar
+      android:id="@+id/progress_circular"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      android:layout_gravity="center"/>
+
+  </FrameLayout>
+
 
 </LinearLayout>
