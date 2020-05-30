@@ -7,4 +7,5 @@
 
 所以就从今天开始我从0到1打造出这个复杂的行情图！费话不多说，上图！
 
-<img src="/Users/kemeng/Desktop/device-2020-05-30-110420.png" style="zoom:30%;" />
+<img src="https://github.com/SlamDunk007/StockChart/blob/master/stockChart.png" style="zoom:30%;" />
+
