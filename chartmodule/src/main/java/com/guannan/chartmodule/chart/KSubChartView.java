@@ -12,8 +12,11 @@ import android.view.MotionEvent;
 import androidx.annotation.Nullable;
 import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
+import com.guannan.chartmodule.data.LineRectItem;
+import com.guannan.chartmodule.data.SubChartData;
 import com.guannan.chartmodule.helper.ChartDataSourceHelper;
 import com.guannan.chartmodule.helper.ChartTouchHelper;
+import com.guannan.chartmodule.helper.TechParamType;
 import com.guannan.chartmodule.utils.DisplayUtils;
 import com.guannan.chartmodule.utils.NumFormatUtils;
 import com.guannan.chartmodule.utils.PaintUtils;
@@ -36,6 +39,8 @@ public class KSubChartView extends BaseChartView {
    */
   private ExtremeValue mExtremeValue;
 
+  private SubChartData mSubChartData;
+
   /**
    * 主图文本间隔
    */
@@ -55,6 +60,11 @@ public class KSubChartView extends BaseChartView {
    * 手指是否抬起
    */
   private boolean onTapUp;
+
+  /**
+   * 附图类型
+   */
+  private TechParamType mTechParamType;
 
   public KSubChartView(Context context) {
     this(context, null);
@@ -94,6 +104,49 @@ public class KSubChartView extends BaseChartView {
 
     RectF contentRect = mViewPortHandler.mContentRect;
 
+    if (mTechParamType == TechParamType.VOLUME) {
+      drawVolume(canvas, contentRect);
+    } else if (mTechParamType == TechParamType.MACD) {
+      drawMacd(canvas, contentRect);
+    }
+
+    if (mFocusPoint != null && !onTapUp) {
+
+      // 附图实际y轴位置
+      float focusY = mFocusPoint.y - getY() - contentRect.top;
+
+      if (contentRect.contains(mFocusPoint.x, focusY)) {
+        canvas.drawLine(contentRect.left, focusY, contentRect.right, focusY,
+            PaintUtils.FOCUS_LINE_PAINT);
+      }
+      canvas.drawLine(mFocusPoint.x, contentRect.top, mFocusPoint.x, contentRect.bottom,
+          PaintUtils.FOCUS_LINE_PAINT);
+    }
+  }
+
+  private void drawMacd(Canvas canvas, RectF contentRect) {
+    if (mSubChartData != null) {
+      canvas.drawPath(mSubChartData.macdPaths[0], PaintUtils.MA_LINE_DIF_PAINT);
+      canvas.drawPath(mSubChartData.macdPaths[1], PaintUtils.MA_LINE_DEA_PAINT);
+      List<LineRectItem> macdRects = mSubChartData.macdRects;
+      if (macdRects != null && !macdRects.isEmpty()) {
+        for (int i = 0; i < macdRects.size(); i++) {
+          LineRectItem lineRectItem = macdRects.get(i);
+          boolean isFall = lineRectItem.isFall;
+          if (isFall) {
+            canvas.drawRect(lineRectItem.rect, mPaintGreen);
+          } else {
+            canvas.drawRect(lineRectItem.rect, mPaintRed);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * 绘制成交量
+   */
+  private void drawVolume(Canvas canvas, RectF contentRect) {
     for (int i = 0; i < mToDrawList.size(); i++) {
       KLineToDrawItem drawItem = mToDrawList.get(i);
       if (drawItem != null) {
@@ -109,19 +162,6 @@ public class KSubChartView extends BaseChartView {
           canvas.drawRect(drawItem.volumeRect, mPaintRed);
         }
       }
-    }
-
-    if (mFocusPoint != null && !onTapUp) {
-
-      // 附图实际y轴位置
-      float focusY = mFocusPoint.y - getY() - contentRect.top;
-
-      if (contentRect.contains(mFocusPoint.x, focusY)) {
-        canvas.drawLine(contentRect.left, focusY, contentRect.right, focusY,
-            PaintUtils.FOCUS_LINE_PAINT);
-      }
-      canvas.drawLine(mFocusPoint.x, contentRect.top, mFocusPoint.x, contentRect.bottom,
-          PaintUtils.FOCUS_LINE_PAINT);
     }
   }
 
@@ -142,7 +182,7 @@ public class KSubChartView extends BaseChartView {
     canvas.drawLine(contentRect.left, contentRect.centerY(), contentRect.right,
         contentRect.centerY(), PaintUtils.GRID_INNER_DIVIDER);
     // 绘制附图最大刻度
-    if (mExtremeValue != null) {
+    if (mExtremeValue != null && mTechParamType == TechParamType.VOLUME) {
       String maxVolume = NumFormatUtils.formatBigFloatAll(mExtremeValue.maxVolume, 2);
       Rect rect = new Rect();
       PaintUtils.TEXT_PAINT.getTextBounds(maxVolume, 0, maxVolume.length(), rect);
@@ -155,9 +195,12 @@ public class KSubChartView extends BaseChartView {
   /**
    * 设置副图数据，并触发绘制
    */
-  public void initData(List<KLineToDrawItem> data, ExtremeValue extremeValue) {
+  public void initData(List<KLineToDrawItem> data, ExtremeValue extremeValue,
+      TechParamType techParamType, SubChartData subChartData) {
     this.mToDrawList = data;
     this.mExtremeValue = extremeValue;
+    this.mTechParamType = techParamType;
+    this.mSubChartData = subChartData;
     invalidateView();
   }
 
@@ -193,5 +236,15 @@ public class KSubChartView extends BaseChartView {
       onTapUp = true;
     }
     invalidateView();
+  }
+
+  @Override
+  public void onChartSingleTapped(MotionEvent me) {
+    //if (mTechParamType == TechParamType.VOLUME) {
+    //  mTechParamType = TechParamType.MACD;
+    //} else if (mTechParamType == TechParamType.MACD) {
+    //  mTechParamType = TechParamType.VOLUME;
+    //}
+    //invalidateView();
   }
 }

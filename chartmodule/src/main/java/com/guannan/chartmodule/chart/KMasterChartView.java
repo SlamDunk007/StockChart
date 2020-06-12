@@ -10,13 +10,16 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import androidx.annotation.Nullable;
+import com.guannan.chartmodule.R;
 import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
 import com.guannan.chartmodule.helper.ChartDataSourceHelper;
 import com.guannan.chartmodule.helper.ChartTouchHelper;
+import com.guannan.chartmodule.utils.DateUtils;
 import com.guannan.chartmodule.utils.DisplayUtils;
 import com.guannan.chartmodule.utils.NumFormatUtils;
 import com.guannan.chartmodule.utils.PaintUtils;
+import com.guannan.simulateddata.entity.KLineItem;
 import java.util.List;
 
 /**
@@ -57,9 +60,14 @@ public class KMasterChartView extends BaseChartView {
   private PointF mFocusPoint;
 
   /**
-   * 手指是否抬起
+   * 是否是长按
    */
-  private boolean onTapUp;
+  private boolean onLongPress;
+
+  /**
+   * 长按弹出的弹框
+   */
+  private RectF popRect = new RectF();
 
   public KMasterChartView(Context context) {
     this(context, null);
@@ -122,13 +130,80 @@ public class KMasterChartView extends BaseChartView {
         }
       }
     }
-    if (mFocusPoint != null && !onTapUp) {
+
+    // 绘制长按十字线
+    if (mFocusPoint != null && onLongPress) {
       if (contentRect.contains(mFocusPoint.x, mFocusPoint.y)) {
         canvas.drawLine(contentRect.left, mFocusPoint.y, contentRect.right, mFocusPoint.y,
             PaintUtils.FOCUS_LINE_PAINT);
       }
       canvas.drawLine(mFocusPoint.x, contentRect.top, mFocusPoint.x, contentRect.bottom,
           PaintUtils.FOCUS_LINE_PAINT);
+    }
+
+    // 长按显示的弹框
+    showLongPressDialog(canvas, contentRect);
+  }
+
+  /**
+   * 长按显示的弹框内容
+   */
+  private void showLongPressDialog(Canvas canvas, RectF contentRect) {
+    if (onLongPress) {
+      KLineToDrawItem item = mToDrawList.get(mFocusIndex);
+      float left = contentRect.right - TEXT_PADDING * 2 - DisplayUtils.dip2px(getContext(), 110);
+      float top = contentRect.top + TEXT_PADDING;
+      popRect.set(left, top,
+          left + DisplayUtils.dip2px(getContext(), 110),
+          top + DisplayUtils.dip2px(getContext(), 120));
+      canvas.drawRect(popRect, PaintUtils.POP_DIALOG_PAINT);
+
+      KLineItem klineItem = item.klineItem;
+      float perHeight = popRect.height() / 7;
+
+      drawPopText(canvas, popRect, getString(R.string.date), DateUtils.getYMD(klineItem.day),
+          item.isFall, perHeight);
+      drawPopText(canvas, popRect, getString(R.string.open), String.valueOf(klineItem.open),
+          item.isFall,
+          perHeight * 2);
+      drawPopText(canvas, popRect, getString(R.string.hign), String.valueOf(klineItem.high),
+          item.isFall,
+          perHeight * 3);
+      drawPopText(canvas, popRect, getString(R.string.low), String.valueOf(klineItem.low),
+          item.isFall, perHeight * 4);
+      drawPopText(canvas, popRect, getString(R.string.close), String.valueOf(klineItem.close),
+          item.isFall,
+          perHeight * 5);
+      drawPopText(canvas, popRect, getString(R.string.diff),
+          String.valueOf(NumFormatUtils.formatFloat(klineItem.open - klineItem.preClose, 2)),
+          item.isFall,
+          perHeight * 6);
+      float chg = (klineItem.open - klineItem.preClose) * 100 / klineItem.preClose;
+      String chgDesc = NumFormatUtils.formatFloat(chg, 2, true, true, "--", "--", false);
+      drawPopText(canvas, popRect, getString(R.string.chg), chgDesc, item.isFall, perHeight * 7);
+    }
+  }
+
+  public void drawPopText(Canvas canvas, RectF popRect, String title, String value, boolean isFall,
+      float y) {
+    Rect rect = new Rect();
+    PaintUtils.TEXT_POP_PAINT.getTextBounds(value, 0, value.length(), rect);
+    canvas.drawText(title, popRect.left + TEXT_PADDING, popRect.top + y - TEXT_PADDING,
+        PaintUtils.TEXT_POP_PAINT);
+    if (title.equals(getString(R.string.diff)) || title.equals(getString(R.string.chg))) {
+      if (isFall) {
+        canvas.drawText(value, popRect.right - rect.width() - TEXT_PADDING,
+            popRect.top + y - TEXT_PADDING,
+            PaintUtils.TEXT_GREEN_PAINT);
+      } else {
+        canvas.drawText(value, popRect.right - rect.width() - TEXT_PADDING,
+            popRect.top + y - TEXT_PADDING,
+            PaintUtils.TEXT_RED_PAINT);
+      }
+    } else {
+      canvas.drawText(value, popRect.right - rect.width() - TEXT_PADDING,
+          popRect.top + y - TEXT_PADDING,
+          PaintUtils.TEXT_POP_PAINT);
     }
   }
 
@@ -189,7 +264,7 @@ public class KMasterChartView extends BaseChartView {
   @Override
   public void onChartLongPressed(MotionEvent me) {
 
-    onTapUp = false;
+    onLongPress = true;
     mFocusPoint = new PointF();
     mFocusPoint.set(me.getX(), me.getY());
 
@@ -212,8 +287,13 @@ public class KMasterChartView extends BaseChartView {
       if (mFocusPoint != null) {
         mFocusPoint.set(me.getX(), me.getY());
       }
-      onTapUp = true;
+      onLongPress = false;
     }
     invalidateView();
+  }
+
+  @Override
+  public void onChartSingleTapped(MotionEvent me) {
+
   }
 }

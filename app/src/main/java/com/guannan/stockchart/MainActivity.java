@@ -12,7 +12,9 @@ import com.guannan.chartmodule.chart.KSubChartView;
 import com.guannan.chartmodule.chart.MarketFigureChart;
 import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
+import com.guannan.chartmodule.data.SubChartData;
 import com.guannan.chartmodule.helper.ChartDataSourceHelper;
+import com.guannan.chartmodule.helper.TechParamType;
 import com.guannan.chartmodule.inter.IChartDataCountListener;
 import com.guannan.chartmodule.inter.IPressChangeListener;
 import com.guannan.simulateddata.LocalUtils;
@@ -29,6 +31,10 @@ public class MainActivity extends AppCompatActivity
   private MarketFigureChart mMarketFigureChart;
   private ProgressBar mProgressBar;
 
+  private int MAX_COLUMNS = 160;
+  private int MIN_COLUMNS = 20;
+  private KSubChartView mMacdView;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -41,11 +47,15 @@ public class MainActivity extends AppCompatActivity
 
     // 行情图主图（蜡烛线）
     mKLineChartView = new KMasterChartView(this);
-    mMarketFigureChart.addChildChart(mKLineChartView, 200);
+    mMarketFigureChart.addChildChart(mKLineChartView, 300);
 
     // 行情图附图（成交量）
     mVolumeView = new KSubChartView(this);
     mMarketFigureChart.addChildChart(mVolumeView, 100);
+
+    // MACD
+    mMacdView = new KSubChartView(this);
+    mMarketFigureChart.addChildChart(mMacdView, 100);
 
     // 容器的手势监听
     mMarketFigureChart.setPressChangeListener(this);
@@ -101,16 +111,18 @@ public class MainActivity extends AppCompatActivity
       mHelper = new ChartDataSourceHelper(this);
     }
     mProgressBar.setVisibility(View.GONE);
-    mHelper.initKDrawData(parser.klineList, mKLineChartView, mVolumeView);
+    mHelper.initKDrawData(parser.klineList, mKLineChartView, mVolumeView, mMacdView);
   }
 
   /**
    * 对主图和附图进行数据填充
    */
   @Override
-  public void onReady(List<KLineToDrawItem> data, ExtremeValue extremeValue) {
+  public void onReady(List<KLineToDrawItem> data, ExtremeValue extremeValue,
+      SubChartData subChartData) {
     mKLineChartView.initData(data, extremeValue);
-    mVolumeView.initData(data, extremeValue);
+    mVolumeView.initData(data, extremeValue, TechParamType.VOLUME,subChartData);
+    mMacdView.initData(data, extremeValue, TechParamType.MACD,subChartData);
   }
 
   /**
@@ -119,7 +131,7 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onChartTranslate(MotionEvent me, float dX) {
     if (mHelper != null) {
-      mHelper.initKMoveDrawData(dX);
+      mHelper.initKMoveDrawData(dX, ChartDataSourceHelper.SourceType.MOVE);
     }
   }
 
@@ -129,7 +141,17 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onChartFling(float distanceX) {
     if (mHelper != null) {
-      mHelper.initKMoveDrawData(distanceX);
+      mHelper.initKMoveDrawData(distanceX, ChartDataSourceHelper.SourceType.FLING);
+    }
+  }
+
+  @Override
+  public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+    ChartDataSourceHelper.K_D_COLUMNS = (int) (ChartDataSourceHelper.K_D_COLUMNS / scaleX);
+    ChartDataSourceHelper.K_D_COLUMNS =
+        Math.max(MIN_COLUMNS, Math.min(MAX_COLUMNS, ChartDataSourceHelper.K_D_COLUMNS));
+    if (mHelper != null) {
+      mHelper.initKMoveDrawData(0, ChartDataSourceHelper.SourceType.SCALE);
     }
   }
 }

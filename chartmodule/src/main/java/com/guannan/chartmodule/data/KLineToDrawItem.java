@@ -1,6 +1,8 @@
 package com.guannan.chartmodule.data;
 
+import android.graphics.Path;
 import android.graphics.RectF;
+import com.guannan.simulateddata.entity.KLineItem;
 import java.io.Serializable;
 
 /**
@@ -36,7 +38,7 @@ public class KLineToDrawItem implements Serializable {
   public RectF volumeRect;
 
   /**
-   * 最大最小值
+   * 日K数据
    */
-  public ExtremeValue extremeValue;
+  public KLineItem klineItem;
 }

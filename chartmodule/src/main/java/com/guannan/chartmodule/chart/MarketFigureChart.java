@@ -92,7 +92,12 @@ public class MarketFigureChart extends LinearLayout implements IChartGestureList
 
   @Override
   public void onChartSingleTapped(MotionEvent me) {
-
+    for (int i = 0; i < getChildCount(); i++) {
+      BaseChartView baseChartView = (BaseChartView) getChildAt(i);
+      if (baseChartView != null) {
+        baseChartView.onChartSingleTapped(me);
+      }
+    }
   }
 
   @Override
@@ -104,7 +109,9 @@ public class MarketFigureChart extends LinearLayout implements IChartGestureList
 
   @Override
   public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
+    if (mPressChangeListener != null) {
+      mPressChangeListener.onChartScale(me, scaleX, scaleY);
+    }
   }
 
   @Override

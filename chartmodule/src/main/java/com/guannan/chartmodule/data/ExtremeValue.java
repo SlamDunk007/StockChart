@@ -21,4 +21,14 @@ public class ExtremeValue {
    * 蜡烛线最大成交量
    */
   public float maxVolume;
+
+  /**
+   * MACD最大值
+   */
+  public float macdMax;
+
+  /**
+   * MACD最小值
+   */
+  public float macdMin;
 }

@@ -48,4 +48,28 @@ public class NumFormatUtils {
       }
     }
   }
+
+  public static String formatFloat(float d, int digits, boolean isAddPercentSign,
+      boolean isAddPlus, String defaultRet, String unit, boolean isZeroReturnDefault) {
+
+    if (isZeroReturnDefault && DataUtils.isZero(d)) {
+      return defaultRet;
+    }
+    try {
+      BigDecimal b = new BigDecimal(Float.toString(d));
+      StringBuilder sb = new StringBuilder(b.setScale(digits, BigDecimal.ROUND_HALF_UP).toString());
+      if (isAddPercentSign) {
+        sb.append('%');
+      } else {
+        sb.append(unit);
+      }
+
+      if (d > 0 && isAddPlus) {
+        sb.insert(0, '+');
+      }
+      return sb.toString();
+    } catch (NumberFormatException e) {
+      return defaultRet;
+    }
+  }
 }
