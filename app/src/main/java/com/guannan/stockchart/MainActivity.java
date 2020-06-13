@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
 
     // 行情图主图（蜡烛线）
     mKLineChartView = new KMasterChartView(this);
-    mMarketFigureChart.addChildChart(mKLineChartView, 300);
+    mMarketFigureChart.addChildChart(mKLineChartView, 200);
 
     // 行情图附图（成交量）
     mVolumeView = new KSubChartView(this);

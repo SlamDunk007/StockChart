@@ -88,7 +88,7 @@ public class KMasterChartView extends BaseChartView {
     TEXT_PADDING = DisplayUtils.dip2px(context, 5);
     CAL_PADDING = DisplayUtils.dip2px(context, 3);
 
-    mViewPortHandler.setContentRatio(0.95f);
+    mViewPortHandler.setContentRatio(0.9f);
   }
 
   @Override

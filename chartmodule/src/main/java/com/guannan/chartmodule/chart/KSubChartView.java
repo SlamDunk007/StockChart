@@ -84,7 +84,7 @@ public class KSubChartView extends BaseChartView {
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     mViewPortHandler.restrainViewPort(DisplayUtils.dip2px(getContext(), 10),
-        DisplayUtils.dip2px(getContext(), 20), DisplayUtils.dip2px(getContext(), 10),
+        DisplayUtils.dip2px(getContext(), 15), DisplayUtils.dip2px(getContext(), 10),
         0);
     super.onSizeChanged(w, h, oldw, oldh);
   }
