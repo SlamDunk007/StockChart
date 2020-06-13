@@ -3,6 +3,6 @@
 
 # 效果图
 
-<img src="https://github.com/SlamDunk007/StockChart/blob/master/chart_dynamic.gif" width="300"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart1.png" width="300" /> <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart2.png" width="300"/>
+<img src="https://github.com/SlamDunk007/StockChart/blob/master/chart_dynamic.gif" width="250"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart1.png" width="250" /> <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart2.png" width="250"/>
 
 # 项目关键类
