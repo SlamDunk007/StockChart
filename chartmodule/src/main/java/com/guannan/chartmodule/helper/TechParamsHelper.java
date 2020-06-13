@@ -1,6 +1,7 @@
 package com.guannan.chartmodule.helper;
 
 import com.guannan.chartmodule.data.TechItem;
+import com.guannan.chartmodule.utils.DataUtils;
 import com.guannan.simulateddata.entity.KLineItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,40 +37,84 @@ public class TechParamsHelper {
 
   /**
    * 获取技术指标的极值
-   * @param techItem
-   * @return
    */
-  public Limit getLimitValue(TechItem techItem) {
+  public Limit getLimitValue(TechItem techItem, TechParamType techParamType) {
     Limit limit = new Limit();
-    limit.max = techItem.dea;
-    limit.min = techItem.dif;
-    if (techItem.dea < techItem.dif) {
-      limit.max = techItem.dif;
-      limit.min = techItem.dea;
-    }
-    if (limit.max < techItem.macd) {
-      limit.max = techItem.macd;
-    }
-    if (limit.min > techItem.macd) {
-      limit.min = techItem.macd;
+    if (techParamType == TechParamType.MACD) {
+      limit.max = techItem.dea;
+      limit.min = techItem.dif;
+      if (techItem.dea < techItem.dif) {
+        limit.max = techItem.dif;
+        limit.min = techItem.dea;
+      }
+      if (limit.max < techItem.macd) {
+        limit.max = techItem.macd;
+      }
+      if (limit.min > techItem.macd) {
+        limit.min = techItem.macd;
+      }
+    } else if (techParamType == TechParamType.BOLL) {
+      limit.max = techItem.upper;
+      limit.min = techItem.lower;
     }
     return limit;
   }
 
   /**
    * 计算技术指标
-   * @param list
-   * @param techParamType
    */
   public void caculateTechParams(List<KLineItem> list, TechParamType techParamType) {
     // 附图MACD
     if (techParamType == TechParamType.MACD) {
       linkDataMACD(list);
+    } else if (techParamType == TechParamType.BOLL) {
+      linkDataBOLL(list);
     }
   }
 
   /**
-   * 附图MACD
+   * BOLL
+   */
+  private void linkDataBOLL(List<KLineItem> list) {
+    int len = list.size();
+    KLineItem itemK;
+    TechItem itemT;
+
+    final int _EN = 20;
+    float sum = .0f, std2 = .0f, stdsum = .0f;
+    float tmpArr[] = new float[len];
+
+    for (int i = 0; i < len; i++) {
+      itemK = list.get(i);
+      itemT = getTechItem(i);
+
+      sum += itemK.close;
+      if (i >= _EN - 1) {
+        itemT.boll = sum / _EN;
+        sum -= list.get(i - _EN + 1).close;
+      } else {
+        itemT.boll = sum / (i + 1);
+      }
+      // 差值的平方
+      tmpArr[i] = (float) Math.pow((itemK.close - itemT.boll), 2);
+      stdsum += tmpArr[i];
+      if (i > _EN - 1) {
+        stdsum -= tmpArr[i - _EN];
+        if (stdsum < .0) {
+          stdsum = Math.abs(stdsum);
+        }
+      }
+      std2 = (float) (2 * Math.sqrt(stdsum / Math.min(i + 1, _EN)));
+      if (std2 < DataUtils.EPSILON) {
+        std2 = itemT.boll * 0.1f;
+      }
+      itemT.upper = itemT.boll + std2;
+      itemT.lower = itemT.boll - std2;
+    }
+  }
+
+  /**
+   * MACD
    */
   public void linkDataMACD(List<KLineItem> list) {
     int len = list.size();

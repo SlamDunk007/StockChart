@@ -12,4 +12,9 @@ public class TechItem {
   public float dif = .0f;
   public float dea = .0f;
   public float macd = .0f;
+
+  // BOLL
+  public float boll = .0f;
+  public float upper = .0f;
+  public float lower = .0f;
 }

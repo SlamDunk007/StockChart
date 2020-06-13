@@ -23,9 +23,14 @@ public class SubChartData {
 
   public List<LineRectItem> macdRects = new ArrayList<>();
 
+  public Path[] bollPaths = new Path[3];
+
   public SubChartData() {
     for (int i = 0; i < MACDLINES; i++) {
       macdPaths[i] = new Path();
+    }
+    for (int j = 0; j < 3; j++) {
+      bollPaths[j] = new Path();
     }
   }
 
@@ -35,6 +40,11 @@ public class SubChartData {
         if (macdPath != null) {
           macdPath.reset();
         }
+      }
+    }
+    if (bollPaths != null) {
+      for (Path bollPath : bollPaths) {
+        bollPath.reset();
       }
     }
     if (macdRects != null) {

@@ -14,6 +14,7 @@ import com.guannan.chartmodule.data.ExtremeValue;
 import com.guannan.chartmodule.data.KLineToDrawItem;
 import com.guannan.chartmodule.data.LineRectItem;
 import com.guannan.chartmodule.data.SubChartData;
+import com.guannan.chartmodule.data.TechItem;
 import com.guannan.chartmodule.helper.ChartDataSourceHelper;
 import com.guannan.chartmodule.helper.ChartTouchHelper;
 import com.guannan.chartmodule.helper.TechParamType;
@@ -57,9 +58,9 @@ public class KSubChartView extends BaseChartView {
   private PointF mFocusPoint;
 
   /**
-   * 手指是否抬起
+   * 手指是否长按
    */
-  private boolean onTapUp;
+  private boolean onLongPress;
 
   /**
    * 附图类型
@@ -83,7 +84,7 @@ public class KSubChartView extends BaseChartView {
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     mViewPortHandler.restrainViewPort(DisplayUtils.dip2px(getContext(), 10),
-        0, DisplayUtils.dip2px(getContext(), 10),
+        DisplayUtils.dip2px(getContext(), 20), DisplayUtils.dip2px(getContext(), 10),
         0);
     super.onSizeChanged(w, h, oldw, oldh);
   }
@@ -104,13 +105,21 @@ public class KSubChartView extends BaseChartView {
 
     RectF contentRect = mViewPortHandler.mContentRect;
 
+    KLineToDrawItem item = mToDrawList.get(mToDrawList.size() - 1);
     if (mTechParamType == TechParamType.VOLUME) {
       drawVolume(canvas, contentRect);
+      if (!onLongPress) {
+        drawVolumeDes(canvas, contentRect, item);
+      }
     } else if (mTechParamType == TechParamType.MACD) {
+
       drawMacd(canvas, contentRect);
+      if (!onLongPress) {
+        drawTechDes(canvas, contentRect, item);
+      }
     }
 
-    if (mFocusPoint != null && !onTapUp) {
+    if (mFocusPoint != null && onLongPress) {
 
       // 附图实际y轴位置
       float focusY = mFocusPoint.y - getY() - contentRect.top;
@@ -121,13 +130,59 @@ public class KSubChartView extends BaseChartView {
       }
       canvas.drawLine(mFocusPoint.x, contentRect.top, mFocusPoint.x, contentRect.bottom,
           PaintUtils.FOCUS_LINE_PAINT);
+      KLineToDrawItem drawItem = mToDrawList.get(mFocusIndex);
+      if (mTechParamType == TechParamType.MACD) {
+        drawTechDes(canvas, contentRect, drawItem);
+      } else if (mTechParamType == TechParamType.VOLUME) {
+        drawVolumeDes(canvas, contentRect, drawItem);
+      }
     }
   }
 
+  /**
+   * 绘制成交量左上角指标
+   */
+  private void drawVolumeDes(Canvas canvas, RectF contentRect, KLineToDrawItem item) {
+    long volume = item.klineItem.volume;
+    String volumeDes = "成交量:" + NumFormatUtils.formatBigFloatAll(volume,2);
+    canvas.drawText(volumeDes, contentRect.left, contentRect.top - TEXT_PADDING,
+        PaintUtils.TEXT_PAINT);
+  }
+
+  /**
+   * 绘制MACD左上角指标显示
+   */
+  public void drawTechDes(Canvas canvas, RectF contentRect, KLineToDrawItem drawItem) {
+
+    TechItem techItem = drawItem.techItem;
+    float dif = NumFormatUtils.formatFloat(techItem.dif, 2);
+    String difDes = "MACD  DIF:" + dif;
+    Rect rectMid = new Rect();
+    PaintUtils.TEXT_YELLOW_PAINT.getTextBounds(difDes, 0, difDes.length(), rectMid);
+    canvas.drawText(difDes, contentRect.left, contentRect.top - TEXT_PADDING,
+        PaintUtils.TEXT_YELLOW_PAINT);
+
+    float dea = NumFormatUtils.formatFloat(techItem.dea, 2);
+    String deaDes = "DEA:" + dea;
+    Rect rectUpper = new Rect();
+    PaintUtils.TEXT_BLUE_PAINT.getTextBounds(deaDes, 0, deaDes.length(), rectUpper);
+    canvas.drawText(deaDes, contentRect.left + rectMid.width() + TEXT_PADDING,
+        contentRect.top - TEXT_PADDING, PaintUtils.TEXT_BLUE_PAINT);
+
+    float macd = NumFormatUtils.formatFloat(techItem.macd, 2);
+    String macdDes = "MACD:" + macd;
+    canvas.drawText(macdDes,
+        contentRect.left + rectMid.width() + rectUpper.width() + TEXT_PADDING * 2,
+        contentRect.top - TEXT_PADDING, PaintUtils.TEXT_PURPLE_PAINT);
+  }
+
+  /**
+   * 绘制附图MACD
+   */
   private void drawMacd(Canvas canvas, RectF contentRect) {
     if (mSubChartData != null) {
-      canvas.drawPath(mSubChartData.macdPaths[0], PaintUtils.MA_LINE_DIF_PAINT);
-      canvas.drawPath(mSubChartData.macdPaths[1], PaintUtils.MA_LINE_DEA_PAINT);
+      canvas.drawPath(mSubChartData.macdPaths[0], PaintUtils.LINE_BLUE_PAINT);
+      canvas.drawPath(mSubChartData.macdPaths[1], PaintUtils.LINE_YELLOW_PAINT);
       List<LineRectItem> macdRects = mSubChartData.macdRects;
       if (macdRects != null && !macdRects.isEmpty()) {
         for (int i = 0; i < macdRects.size(); i++) {
@@ -210,7 +265,7 @@ public class KSubChartView extends BaseChartView {
   @Override
   public void onChartLongPressed(MotionEvent me) {
 
-    onTapUp = false;
+    onLongPress = true;
     mFocusPoint = new PointF();
     mFocusPoint.set(me.getX(), me.getY());
 
@@ -233,7 +288,7 @@ public class KSubChartView extends BaseChartView {
       if (mFocusPoint != null) {
         mFocusPoint.set(me.getX(), me.getY());
       }
-      onTapUp = true;
+      onLongPress = false;
     }
     invalidateView();
   }

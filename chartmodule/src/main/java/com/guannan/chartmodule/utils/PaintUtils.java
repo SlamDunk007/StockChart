@@ -60,13 +60,25 @@ public class PaintUtils {
   public static Paint TEXT_GREEN_PAINT = new Paint();
   public final static int C_TEXT_GREEN = 0xff05aa3b;
 
-  public static Paint MA_LINE_DEA_PAINT = new Paint();
+  /**
+   * 黄
+   */
+  public static Paint LINE_YELLOW_PAINT = new Paint();
+  public static Paint TEXT_YELLOW_PAINT = new Paint();
   public final static int C_LINE_DEA = 0XFFFFA100;
 
-  public static Paint MA_LINE_DIF_PAINT = new Paint();
+  /**
+   * 蓝
+   */
+  public static Paint LINE_BLUE_PAINT = new Paint();
+  public static Paint TEXT_BLUE_PAINT = new Paint();
   public final static int C_LINE_DIF = 0XFF4E8BEE;
 
-  public static Paint MA_LINE_MACD_PAINT = new Paint();
+  /**
+   * 紫
+   */
+  public static Paint LINE_PURPLE_PAINT = new Paint();
+  public static Paint TEXT_PURPLE_PAINT = new Paint();
   public final static int C_LINE_MACD = 0XFFFF3FBE;
 
   static {
@@ -100,29 +112,44 @@ public class PaintUtils {
     TEXT_GREEN_PAINT.setColor(C_TEXT_GREEN);
     TEXT_GREEN_PAINT.setAntiAlias(true);
 
-    MA_LINE_DEA_PAINT.setStyle(Paint.Style.STROKE);
-    MA_LINE_DEA_PAINT.setStrokeWidth(2);
-    MA_LINE_DEA_PAINT.setColor(C_LINE_DEA);
-    MA_LINE_DEA_PAINT.setStrokeCap(Paint.Cap.ROUND);
-    MA_LINE_DEA_PAINT.setAntiAlias(true);
+    LINE_YELLOW_PAINT.setStyle(Paint.Style.STROKE);
+    LINE_YELLOW_PAINT.setStrokeWidth(2);
+    LINE_YELLOW_PAINT.setColor(C_LINE_DEA);
+    LINE_YELLOW_PAINT.setStrokeCap(Paint.Cap.ROUND);
+    LINE_YELLOW_PAINT.setAntiAlias(true);
 
-    MA_LINE_DIF_PAINT.setStyle(Paint.Style.STROKE);
-    MA_LINE_DIF_PAINT.setStrokeWidth(2);
-    MA_LINE_DIF_PAINT.setColor(C_LINE_DIF);
-    MA_LINE_DIF_PAINT.setStrokeCap(Paint.Cap.ROUND);
-    MA_LINE_DIF_PAINT.setAntiAlias(true);
+    TEXT_YELLOW_PAINT.setStyle(Paint.Style.FILL);
+    TEXT_YELLOW_PAINT.setColor(C_LINE_DEA);
+    TEXT_YELLOW_PAINT.setAntiAlias(true);
 
-    MA_LINE_MACD_PAINT.setStyle(Paint.Style.STROKE);
-    MA_LINE_MACD_PAINT.setStrokeWidth(2);
-    MA_LINE_MACD_PAINT.setColor(C_LINE_MACD);
-    MA_LINE_MACD_PAINT.setStrokeCap(Paint.Cap.ROUND);
-    MA_LINE_MACD_PAINT.setAntiAlias(true);
+    LINE_BLUE_PAINT.setStyle(Paint.Style.STROKE);
+    LINE_BLUE_PAINT.setStrokeWidth(2);
+    LINE_BLUE_PAINT.setColor(C_LINE_DIF);
+    LINE_BLUE_PAINT.setStrokeCap(Paint.Cap.ROUND);
+    LINE_BLUE_PAINT.setAntiAlias(true);
+
+    TEXT_BLUE_PAINT.setStyle(Paint.Style.FILL);
+    TEXT_BLUE_PAINT.setColor(C_LINE_DIF);
+    TEXT_BLUE_PAINT.setAntiAlias(true);
+
+    LINE_PURPLE_PAINT.setStyle(Paint.Style.STROKE);
+    LINE_PURPLE_PAINT.setStrokeWidth(2);
+    LINE_PURPLE_PAINT.setColor(C_LINE_MACD);
+    LINE_PURPLE_PAINT.setStrokeCap(Paint.Cap.ROUND);
+    LINE_PURPLE_PAINT.setAntiAlias(true);
+
+    TEXT_PURPLE_PAINT.setStyle(Paint.Style.FILL);
+    TEXT_PURPLE_PAINT.setColor(C_LINE_MACD);
+    TEXT_PURPLE_PAINT.setAntiAlias(true);
   }
 
   public static void init(Context context) {
     TEXT_SIZE_SP = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 8,
         context.getResources().getDisplayMetrics());
     TEXT_PAINT.setTextSize(TEXT_SIZE_SP);
+    TEXT_YELLOW_PAINT.setTextSize(TEXT_SIZE_SP);
+    TEXT_BLUE_PAINT.setTextSize(TEXT_SIZE_SP);
+    TEXT_PURPLE_PAINT.setTextSize(TEXT_SIZE_SP);
     float textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12,
         context.getResources().getDisplayMetrics());
     TEXT_POP_PAINT.setTextSize(textSize);

@@ -57,6 +57,16 @@ public class ChartDataSourceHelper {
   public float minMacd = Float.MAX_VALUE;
 
   /**
+   * Boll最大值
+   */
+  public float maxBoll = Float.MIN_VALUE;
+
+  /**
+   * Boll最小值
+   */
+  public float minBoll = Float.MAX_VALUE;
+
+  /**
    * 行情图当前屏开始的位置
    */
   public int startIndex;
@@ -120,6 +130,7 @@ public class ChartDataSourceHelper {
     // k线首次当前屏结束位置
     endIndex = klineList.size() - 1;
     // 计算技术指标
+    mTechParamsHelper.caculateTechParams(klineList, TechParamType.BOLL);
     mTechParamsHelper.caculateTechParams(klineList, TechParamType.MACD);
     initKMoveDrawData(0, SourceType.INIT);
   }
@@ -145,6 +156,8 @@ public class ChartDataSourceHelper {
 
     // MACD最大最小值
     float diffMacd = maxMacd - minMacd;
+
+    float diffBoll = maxBoll - minBoll;
 
     RectF contentRect = mKLineChartView.getViewPortHandler().mContentRect;
 
@@ -205,6 +218,9 @@ public class ChartDataSourceHelper {
         drawItem.volumeRect = getRect(volumeRct, k, scaleVolume, 1);
       }
 
+      // 计算BOLL
+      caculateBollPath(diffBoll, contentRect, i, k, drawItem);
+
       // 计算附图MACD Path
       caculateMacdPath(diffMacd, i, k, drawItem.isFall);
 
@@ -214,6 +230,40 @@ public class ChartDataSourceHelper {
     // 数据准备完毕
     if (mReadyListener != null) {
       mReadyListener.onReady(kLineItems, extremeValue, mSubChartData);
+    }
+  }
+
+  /**
+   * 计算主图Boll指标
+   */
+  private void caculateBollPath(float diffBoll, RectF contentRect, int i, int k,
+      KLineToDrawItem drawItem) {
+    List<TechItem> listParams = mTechParamsHelper.listParams;
+    TechItem techItem = listParams.get(i);
+    drawItem.techItem = techItem;
+    float scaleY = (maxBoll - techItem.upper) / diffBoll;
+    PointF point = getPoint(contentRect, k, scaleY);
+    if (i == startIndex) {
+      mSubChartData.bollPaths[0].moveTo(point.x, point.y);
+    } else {
+      mSubChartData.bollPaths[0].lineTo(point.x, point.y);
+    }
+
+    scaleY = (maxBoll - techItem.lower) / diffBoll;
+    point = getPoint(contentRect, k, scaleY);
+    if (i == startIndex) {
+      mSubChartData.bollPaths[1].moveTo(point.x, point.y);
+    } else {
+      mSubChartData.bollPaths[1].lineTo(point.x, point.y);
+    }
+
+    float midValue = (techItem.upper + techItem.lower) / 2;
+    scaleY = (maxBoll - midValue) / diffBoll;
+    point = getPoint(contentRect, k, scaleY);
+    if (i == startIndex) {
+      mSubChartData.bollPaths[2].moveTo(point.x, point.y);
+    } else {
+      mSubChartData.bollPaths[2].lineTo(point.x, point.y);
     }
   }
 
@@ -239,10 +289,8 @@ public class ChartDataSourceHelper {
     } else {
       mSubChartData.macdPaths[1].lineTo(point.x, point.y);
     }
-
     scaleY = techItem.macd / diffMacd;
-    RectF macdRect = mMacdView.getViewPortHandler().mContentRect;
-    RectF rect = getRect(macdRect, k, scaleY);
+    RectF rect = getRect(contentRect, k, scaleY);
     LineRectItem lineRectItem = new LineRectItem();
     lineRectItem.rect = rect;
     lineRectItem.isFall = techItem.macd < DataUtils.EPSILON;
@@ -259,6 +307,8 @@ public class ChartDataSourceHelper {
     maxVolume = Float.MIN_VALUE;
     maxMacd = Float.MIN_VALUE;
     minMacd = Float.MAX_VALUE;
+    maxBoll = Float.MIN_VALUE;
+    minBoll = Float.MAX_VALUE;
     if (kLineItems == null) {
       kLineItems = new ArrayList<>();
     } else {
@@ -312,18 +362,32 @@ public class ChartDataSourceHelper {
       }
       // 计算MACD最大值最小值
       TechItem techItem = listParams.get(i);
-      TechParamsHelper.Limit limit = mTechParamsHelper.getLimitValue(techItem);
+      TechParamsHelper.Limit limit = mTechParamsHelper.getLimitValue(techItem, TechParamType.MACD);
       if (limit.max > maxMacd) {
         maxMacd = limit.max;
       }
       if (limit.min < minMacd) {
         minMacd = limit.min;
       }
+
+      // 计算BOLL最大最小值
+      TechParamsHelper.Limit limitValue =
+          mTechParamsHelper.getLimitValue(techItem, TechParamType.BOLL);
+      if (limitValue.max > maxBoll) {
+        maxBoll = limitValue.max;
+      }
+      if (limitValue.min < minBoll) {
+        minBoll = limitValue.min;
+      }
     }
     // 最大值、最小值缩放系数
     maxPrice = maxPrice * (1 + scale);
     maxVolume = maxVolume * (1 + scale);
     minPrice = minPrice * (1 - scale);
+    maxBoll = maxBoll * (1 + scale);
+    minBoll = minBoll * (1 - scale);
+    maxMacd = maxMacd * (1 + scale);
+    minMacd = minMacd * (1 - scale);
 
     ExtremeValue extremeValue = new ExtremeValue();
     extremeValue.maxPrice = maxPrice;
@@ -331,6 +395,8 @@ public class ChartDataSourceHelper {
     extremeValue.maxVolume = maxVolume;
     extremeValue.macdMax = maxMacd;
     extremeValue.macdMin = minMacd;
+    extremeValue.minBoll = minBoll;
+    extremeValue.maxBoll = maxBoll;
     return extremeValue;
   }
 

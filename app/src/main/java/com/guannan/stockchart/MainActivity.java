@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onReady(List<KLineToDrawItem> data, ExtremeValue extremeValue,
       SubChartData subChartData) {
-    mKLineChartView.initData(data, extremeValue);
+    mKLineChartView.initData(data, extremeValue,subChartData);
     mVolumeView.initData(data, extremeValue, TechParamType.VOLUME,subChartData);
     mMacdView.initData(data, extremeValue, TechParamType.MACD,subChartData);
   }

@@ -31,4 +31,14 @@ public class ExtremeValue {
    * MACD最小值
    */
   public float macdMin;
+
+  /**
+   * Boll最大值
+   */
+  public float maxBoll;
+
+  /**
+   * Boll最小值
+   */
+  public float minBoll;
 }

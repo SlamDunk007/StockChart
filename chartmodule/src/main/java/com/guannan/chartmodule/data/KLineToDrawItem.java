@@ -1,6 +1,5 @@
 package com.guannan.chartmodule.data;
 
-import android.graphics.Path;
 import android.graphics.RectF;
 import com.guannan.simulateddata.entity.KLineItem;
 import java.io.Serializable;
@@ -41,4 +40,6 @@ public class KLineToDrawItem implements Serializable {
    * 日K数据
    */
   public KLineItem klineItem;
+
+  public TechItem techItem;
 }

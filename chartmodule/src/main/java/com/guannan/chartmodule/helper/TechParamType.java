@@ -8,4 +8,5 @@ package com.guannan.chartmodule.helper;
 public enum TechParamType {
   VOLUME,
   MACD,
+  BOLL
 }
