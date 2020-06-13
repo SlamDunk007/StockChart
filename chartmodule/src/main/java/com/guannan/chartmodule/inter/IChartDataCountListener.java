@@ -1,6 +1,7 @@
 package com.guannan.chartmodule.inter;
 
 import com.guannan.chartmodule.data.ExtremeValue;
+import com.guannan.chartmodule.data.SubChartData;
 
 /**
  * @author guannan
@@ -9,5 +10,5 @@ import com.guannan.chartmodule.data.ExtremeValue;
  */
 public interface IChartDataCountListener<T> {
 
-  void onReady(T data, ExtremeValue extremeValue);
+  void onReady(T data, ExtremeValue extremeValue, SubChartData subChartData);
 }

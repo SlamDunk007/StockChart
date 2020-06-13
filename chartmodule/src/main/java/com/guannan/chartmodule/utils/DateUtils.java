@@ -16,4 +16,11 @@ public class DateUtils {
     }
     return -1;
   }
+
+  public static String getYMD(String date) {
+    if (date != null && date.length() >= 10) {
+      return date.substring(0, 10);
+    }
+    return date;
+  }
 }

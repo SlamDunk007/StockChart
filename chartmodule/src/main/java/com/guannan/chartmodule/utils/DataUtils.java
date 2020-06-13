@@ -16,4 +16,11 @@ public class DataUtils {
    * -0
    */
   public static float EPSILONNGT = -0.0000001f;
+
+  /**
+   * 浮点零值判定
+   */
+  public static boolean isZero(float val) {
+    return (val > EPSILONNGT && val < EPSILON);
+  }
 }

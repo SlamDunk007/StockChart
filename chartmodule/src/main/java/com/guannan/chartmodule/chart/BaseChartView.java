@@ -103,6 +103,12 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
    */
   protected Paint mPaintGreen;
 
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    initRunnable();
+  }
+
   public BaseChartView(Context context) {
     this(context, null);
   }
@@ -128,17 +134,20 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
     // 行情图尺寸等辅助方法
     mViewPortHandler = new ViewPortHandler();
 
-    initRunnable();
     initHandler();
 
     PaintUtils.init(context);
   }
 
   private void initRunnable() {
-    mThreadPool =
-        new ThreadPoolExecutor(1, 1, 1000L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>());
-    mDoubleBuffering = new DoubleBuffering(this);
+    if (mThreadPool == null) {
+      mThreadPool =
+          new ThreadPoolExecutor(1, 1, 1000L, TimeUnit.MILLISECONDS,
+              new LinkedBlockingQueue<Runnable>());
+    }
+    if (mDoubleBuffering == null) {
+      mDoubleBuffering = new DoubleBuffering(this);
+    }
   }
 
   private void initHandler() {
@@ -149,6 +158,8 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
 
   public abstract void onChartGestureEnd(MotionEvent me,
       ChartTouchHelper.ChartGesture lastPerformedGesture);
+
+  public abstract void onChartSingleTapped(MotionEvent me);
 
   /**
    * 防止内存泄露的Handler
@@ -309,6 +320,10 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
   public void invalidateView() {
     hasDrawed = true;
     invalidate();
+  }
+
+  public String getString(int id) {
+    return getContext().getResources().getString(id);
   }
 
   /**

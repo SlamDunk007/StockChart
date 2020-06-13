@@ -36,4 +36,10 @@ public class KLineItem {
    * 成交量
    */
   public long volume;
+
+  /**
+   * 昨日收盘价
+   */
+  public float preClose;
+
 }
