@@ -181,9 +181,10 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
           if (msg.what == chartView.START_PAINT) {
             // 开始绘制
             DoubleBuffering doubleBuffering = (DoubleBuffering) msg.obj;
-            if (chartView.mThreadPool != null) {
-              chartView.mThreadPool.execute(doubleBuffering);
-            }
+            //if (chartView.mThreadPool != null) {
+            //  chartView.mThreadPool.execute(doubleBuffering);
+            //}
+            post(doubleBuffering);
           } else if (msg.what == chartView.REFRESH) {
 
             if (chartView.mRealBitmap == null) {
@@ -346,7 +347,7 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
         Message message = new Message();
         message.what = START_PAINT;
         message.obj = mDoubleBuffering;
-        mHandler.sendMessageDelayed(message, 25);
+        mHandler.sendMessage(message);
       }
     }
   }
