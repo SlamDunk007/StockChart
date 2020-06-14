@@ -5,7 +5,7 @@ https://blog.csdn.net/kemeng7758/article/details/106729748
 
 # 效果图
 
-<img src="https://github.com/SlamDunk007/StockChart/blob/master/chart_dynamic.gif" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart1.png" width="280" /> <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart2.png" width="280"/>
+<img src="https://github.com/SlamDunk007/StockChart/blob/master/chart_dynamic.gif" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart1.png" width="280" /> <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart2.png" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/scale_max.png" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/scale_min.png" width="280"/>
 
 # 项目关键类
 
