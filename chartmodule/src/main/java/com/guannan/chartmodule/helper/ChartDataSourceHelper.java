@@ -340,6 +340,10 @@ public class ChartDataSourceHelper {
       startIndex = mKList.size() - K_D_COLUMNS;
       endIndex = startIndex + K_D_COLUMNS;
     }
+    if (startIndex < 0) {
+      startIndex = 0;
+      endIndex = startIndex + K_D_COLUMNS;
+    }
   }
 
   /**
