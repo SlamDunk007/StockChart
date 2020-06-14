@@ -1,5 +1,6 @@
 # StockChart
 自定义股票行情图，高仿某币app行情图**（持续更新中！！！）**具体绘制细节参考博客：
+支持：左右滑动、Fling惯性状态、放大缩小
 
 https://blog.csdn.net/kemeng7758/article/details/106729748
 
