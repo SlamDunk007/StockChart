@@ -1,8 +1,13 @@
 # StockChart
 自定义股票行情图，高仿某币app行情图**（持续更新中！！！）**具体绘制细节参考博客：
 https://blog.csdn.net/kemeng7758/article/details/106729748
-# 手势动作
-目前支持左右滑动、Fling惯性状态、放大、缩小
+# 功能
+1.支持行情图左右滑动
+2.支持行情图的惯性滑动
+3.支持行情图的方法和缩小
+4.支持BOLL和MACD技术指标（后面会继续丰富指标）
+5.支持主图副图动态添加，尺寸修改等
+6.支持长按滑动和长按弹框等
 # 效果图
 
 <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart_dynamic.gif" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart1.png" width="280" /> <img src="https://github.com/SlamDunk007/StockChart/blob/master/chart2.png" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/scale_max.png" width="280"/>  <img src="https://github.com/SlamDunk007/StockChart/blob/master/scale_min.png" width="280"/>
