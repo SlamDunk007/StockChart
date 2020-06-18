@@ -144,7 +144,7 @@ public class KSubChartView extends BaseChartView {
    */
   private void drawVolumeDes(Canvas canvas, RectF contentRect, KLineToDrawItem item) {
     long volume = item.klineItem.volume;
-    String volumeDes = "成交量:" + NumFormatUtils.formatBigFloatAll(volume,2);
+    String volumeDes = "成交量:" + NumFormatUtils.formatBigFloatAll(volume, 2);
     canvas.drawText(volumeDes, contentRect.left, contentRect.top - TEXT_PADDING,
         PaintUtils.TEXT_PAINT);
   }
@@ -187,11 +187,13 @@ public class KSubChartView extends BaseChartView {
       if (macdRects != null && !macdRects.isEmpty()) {
         for (int i = 0; i < macdRects.size(); i++) {
           LineRectItem lineRectItem = macdRects.get(i);
-          boolean isFall = lineRectItem.isFall;
-          if (isFall) {
-            canvas.drawRect(lineRectItem.rect, mPaintGreen);
-          } else {
-            canvas.drawRect(lineRectItem.rect, mPaintRed);
+          if (lineRectItem != null) {
+            boolean isFall = lineRectItem.isFall;
+            if (isFall) {
+              canvas.drawRect(lineRectItem.rect, mPaintGreen);
+            } else {
+              canvas.drawRect(lineRectItem.rect, mPaintRed);
+            }
           }
         }
       }

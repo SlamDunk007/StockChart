@@ -227,9 +227,12 @@ public class ChartDataSourceHelper {
       drawItem.klineItem = kLineItem;
       kLineItems.add(drawItem);
     }
+
+    List<KLineToDrawItem> resultList = new ArrayList<>();
     // 数据准备完毕
     if (mReadyListener != null) {
-      mReadyListener.onReady(kLineItems, extremeValue, mSubChartData);
+      resultList.addAll(kLineItems);
+      mReadyListener.onReady(resultList, extremeValue, mSubChartData);
     }
   }
 

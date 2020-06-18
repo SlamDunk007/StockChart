@@ -19,9 +19,8 @@ import com.guannan.chartmodule.helper.ChartTouchHelper;
 import com.guannan.chartmodule.inter.ITouchResponseListener;
 import com.guannan.chartmodule.utils.PaintUtils;
 import java.lang.ref.WeakReference;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author guannan
@@ -84,7 +83,7 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
   /**
    * 单一线程的线程池
    */
-  private ThreadPoolExecutor mThreadPool;
+  private ExecutorService mExecutor;
 
   private DoubleBuffering mDoubleBuffering;
 
@@ -140,10 +139,8 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
   }
 
   private void initRunnable() {
-    if (mThreadPool == null) {
-      mThreadPool =
-          new ThreadPoolExecutor(1, 1, 1000L, TimeUnit.MILLISECONDS,
-              new LinkedBlockingQueue<Runnable>());
+    if (mExecutor == null) {
+      mExecutor = Executors.newSingleThreadExecutor();
     }
     if (mDoubleBuffering == null) {
       mDoubleBuffering = new DoubleBuffering(this);
@@ -181,10 +178,10 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
           if (msg.what == chartView.START_PAINT) {
             // 开始绘制
             DoubleBuffering doubleBuffering = (DoubleBuffering) msg.obj;
-            //if (chartView.mThreadPool != null) {
-            //  chartView.mThreadPool.execute(doubleBuffering);
-            //}
-            post(doubleBuffering);
+            if (chartView.mExecutor != null) {
+              chartView.mExecutor.execute(doubleBuffering);
+            }
+            //post(doubleBuffering);
           } else if (msg.what == chartView.REFRESH) {
 
             if (chartView.mRealBitmap == null) {
@@ -256,8 +253,8 @@ public abstract class BaseChartView extends View implements ITouchResponseListen
     if (mHandler != null) {
       mHandler.removeCallbacksAndMessages(null);
     }
-    if (mThreadPool != null) {
-      mThreadPool.shutdown();
+    if (mExecutor != null) {
+      mExecutor.shutdown();
     }
     if (mRealBitmap != null) {
       if (!mRealBitmap.isRecycled()) {
